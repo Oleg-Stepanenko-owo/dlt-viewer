@@ -121,7 +121,11 @@ SOURCES += main.cpp \
     exporterdialog.cpp \
     dltmsgqueue.cpp \
     dltfileindexerthread.cpp \
-    dltfileindexerdefaultfilterthread.cpp
+    dltfileindexerdefaultfilterthread.cpp \
+    qjsoncontainer.cpp \
+    qjsonitem.cpp \
+    qjsonmodel.cpp \
+    parse_json.cpp
 
 # Show these headers in the project
 HEADERS += mainwindow.h \
@@ -154,7 +158,11 @@ HEADERS += mainwindow.h \
     exporterdialog.h \
     dltmsgqueue.h \
     dltfileindexerthread.h \
-    dltfileindexerdefaultfilterthread.h
+    dltfileindexerdefaultfilterthread.h \
+    qjsoncontainer.h \
+    qjsonitem.h \
+    qjsonmodel.h \
+    parse_json.h
 
 # Compile these UI files
 FORMS += mainwindow.ui \
@@ -168,7 +176,8 @@ FORMS += mainwindow.ui \
     searchdialog.ui \
     multiplecontextdialog.ui \
     jumptodialog.ui \
-    exporterdialog.ui
+    exporterdialog.ui \
+    parse_json.ui
 
 # Related files
 OTHER_FILES += \

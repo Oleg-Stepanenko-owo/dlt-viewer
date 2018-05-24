@@ -7,6 +7,7 @@
 #include <QTreeWidget>
 
 #include "qdlt.h"
+#include "settingsdialog.h"
 
 class DltExporter : public QObject
 {
@@ -64,6 +65,10 @@ public:
                              DltExporter::DltExportFormat exportFormat, DltExporter::DltExportSelection exportSelection, QModelIndexList *selection = 0);
 
 
+    const QString extract_payload( QDltFile *from, QModelIndexList *selection );
+
+    void setSettings( const SettingsDialog* setting );
+
 signals:
     
 public slots:
@@ -78,6 +83,7 @@ private:
     QList<int> selectedRows;
     DltExporter::DltExportFormat exportFormat;
     DltExporter::DltExportSelection exportSelection;
+    const SettingsDialog* m_settings;
 };
 
 #endif // DLTEXPORTER_H

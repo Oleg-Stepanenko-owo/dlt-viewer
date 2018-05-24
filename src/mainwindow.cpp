@@ -18,6 +18,7 @@
  */
 
 #include <iostream>
+#include <memory>
 #include <QMimeData>
 #include <QTreeView>
 #include <QFileDialog>
@@ -39,6 +40,8 @@
 #include <QSerialPort>
 #include <QSerialPortInfo>
 #include <QNetworkProxyFactory>
+#include <QJsonDocument>
+#include "qjsoncontainer.h"
 
 /**
  * From QDlt.
@@ -290,23 +293,23 @@ void MainWindow::initView()
     //ui->tableView->setItemDelegate(delegate);
     //ui->tableView->setItemDelegateForColumn(FieldNames::Payload,delegate);
 
-
-
-
-    /* preset the witdth of the columns somwhow */
-    ui->tableView->setColumnWidth(0,50);  // the first column is the index if there is one ...
-    ui->tableView->setColumnWidth(1,150); // the second column is the receiving time stamp
-    ui->tableView->setColumnWidth(2,70);
+    ui->tableView->setColumnWidth(0,35);
+    ui->tableView->setColumnWidth(1,110);
+    ui->tableView->setColumnWidth(2,50);
     ui->tableView->setColumnWidth(3,40);
     ui->tableView->setColumnWidth(4,40);
-    ui->tableView->setColumnWidth(5,40);
-    ui->tableView->setColumnWidth(6,40);
-    ui->tableView->setColumnWidth(7,50);
-    ui->tableView->setColumnWidth(8,50);
-    ui->tableView->setColumnWidth(9,50);
-    ui->tableView->setColumnWidth(10,50);
-    ui->tableView->setColumnWidth(11,50);
-    ui->tableView->setColumnWidth(12,1200); // 12 is the index of the paayload column !
+    ui->tableView->setColumnWidth(5,45);
+    ui->tableView->setColumnWidth(6,45);
+    ui->tableView->setColumnWidth(7,45);
+    ui->tableView->setColumnWidth(8,45);
+    ui->tableView->setColumnWidth(9,45);
+    ui->tableView->setColumnWidth(10,35);
+    ui->tableView->setColumnWidth(11,35);
+    ui->tableView->setColumnWidth(12,400); // 12 is the index of the paayload column !
+
+    // Payload column expands as needed
+    // horizontal scrolling
+    ui->tableView->horizontalHeader()->setSectionResizeMode(12, QHeaderView::Stretch);
 
     // Some decoder-plugins can create very long payloads, which in turn severly impact performance
     // So set some limit on what is displayed in the tableview. All details are always available using the message viewer-plugin
@@ -366,9 +369,12 @@ void MainWindow::initView()
     connect(settings, SIGNAL(PluginsAutoloadChanged()), this, SLOT(triggerPluginsAutoload()));
 
     searchComboBox = new QComboBox();
-    searchComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
+    searchComboBox->setSizePolicy(QSizePolicy::Expanding, QSizePolicy::MinimumExpanding);
     searchComboBox->setLineEdit(searchTextbox);
     searchComboBox->setInsertPolicy(QComboBox::InsertAtTop);
+
+    if( !settings->storedSearchStr.isEmpty() )
+    searchComboBox->addItem(settings->storedSearchStr);
 
     /* Initialize toolbars. Most of the construction and connection is done via the
      * UI file. See mainwindow.ui, ActionEditor and Signal & Slots editor */
@@ -431,6 +437,7 @@ void MainWindow::initSignalConnections()
 
 void MainWindow::initSearchTable()
 {
+    parseJSONDlg = new Parse_JSON( this );
 
     //init search Dialog
     searchDlg = new SearchDialog(this);
@@ -1202,7 +1209,7 @@ void MainWindow::on_action_menuFile_Append_DLT_File_triggered()
 
 }
 
-void MainWindow::exportSelection(bool ascii = true,bool file = false)
+void MainWindow::exportSelection(bool ascii = true,bool file = false, bool custom = false )
 {
     Q_UNUSED(ascii);
     Q_UNUSED(file);
@@ -1210,6 +1217,7 @@ void MainWindow::exportSelection(bool ascii = true,bool file = false)
     QModelIndexList list = ui->tableView->selectionModel()->selection().indexes();
 
     DltExporter exporter;
+    exporter.setSettings( custom ? project.settings:NULL );
     exporter.exportMessages(&qfile,0,&pluginManager,DltExporter::FormatClipboard,DltExporter::SelectionSelected,&list);
 }
 
@@ -1839,9 +1847,10 @@ void MainWindow::applySettings()
 {
     QFont tableViewFont = ui->tableView->font();
     tableViewFont.setPointSize(settings->fontSize);
+    settings->my_font = tableViewFont;
     ui->tableView->setFont(tableViewFont);
     // Rescale the height of a row to choosen font size + 8 pixels
-    ui->tableView->verticalHeader()->setDefaultSectionSize(settings->fontSize+8);
+    ui->tableView->verticalHeader()->setDefaultSectionSize( settings->rowSize );
 
     settings->showIndex?ui->tableView->showColumn(0):ui->tableView->hideColumn(0);
     settings->showTime?ui->tableView->showColumn(1):ui->tableView->hideColumn(1);
@@ -3489,7 +3498,7 @@ void MainWindow::drawUpdatedView()
     if(settings->autoScroll) {
         ui->tableView->scrollToBottom();
     }
-
+    ui->tableView->verticalHeader()->setDefaultSectionSize( settings->rowSize );
 }
 
 void MainWindow::onTableViewSelectionChanged(const QItemSelection & selected, const QItemSelection & deselected)
@@ -5933,8 +5942,16 @@ void MainWindow::on_tableView_customContextMenuRequested(QPoint pos)
     QAction *action;
     QModelIndexList list = ui->tableView->selectionModel()->selection().indexes();
 
-    action = new QAction("&Copy Selection to Clipboard", this);
+    action = new QAction("&to Clipboard All Fields", this);
     connect(action, SIGNAL(triggered()), this, SLOT(on_action_menuConfig_Copy_to_clipboard_triggered()));
+    menu.addAction(action);
+
+    action = new QAction("to Clipboard Visible Fields", this);
+    connect(action, SIGNAL(triggered()), this, SLOT(on_action_menuConfig_customCopy_to_clipboard_triggered()));
+    menu.addAction(action);
+
+    action = new QAction("parce JSON from current row", this);
+    connect(action, SIGNAL(triggered()), this, SLOT(on_actionaction_JSON_parse_triggered()));
     menu.addAction(action);
 
     menu.addSeparator();
@@ -6198,7 +6215,7 @@ void MainWindow::on_action_menuConfig_Expand_All_ECUs_triggered()
 
 void MainWindow::on_action_menuConfig_Copy_to_clipboard_triggered()
 {
-    exportSelection(true,false);
+    exportSelection(true,false,false);
 }
 
 void MainWindow::on_action_menuFilter_Append_Filters_triggered()
@@ -6738,4 +6755,43 @@ void MainWindow::onSearchProgressChanged(bool isInProgress)
     ui->mainToolBar->setEnabled(!isInProgress);
     ui->searchToolbar->setEnabled(!isInProgress);
     ui->dockWidgetProject->setEnabled(!isInProgress);
+}
+
+void MainWindow::on_actionStoreRegExp_triggered()
+{
+    settings->addSearchStr( searchDlg->getText().toStdString() );
+}
+
+void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
+{
+        QJsonDocument doc = QJsonDocument::fromJson( index.data().toString().toUtf8() );
+        QString clip_str;
+
+        if( !doc.isEmpty() )
+        {
+            QJsonObject json_obj = doc.object();
+            QJsonValue val = json_obj.take("function");
+            clip_str = val.toString();
+        }
+        else
+        {
+            clip_str = index.data().toString();
+        }
+
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText( clip_str );
+}
+
+void MainWindow::on_action_menuConfig_customCopy_to_clipboard_triggered()
+{
+    exportSelection( true,false, true );
+}
+
+void MainWindow::on_actionaction_JSON_parse_triggered()
+{
+    QModelIndexList list = ui->tableView->selectionModel()->selection().indexes();
+    DltExporter exporter;
+
+    parseJSONDlg->loadJson( exporter.extract_payload( &qfile, &list ) ) ;
+    parseJSONDlg->open();
 }

@@ -148,7 +148,7 @@ TableModel::TableModel(const QString & /*data*/, QObject *parent)
          {
          case FieldNames::Index:
              /* display index */
-             return QString("%L1").arg(qfile->getMsgFilterPos(index.row()));
+             return QString("%1").arg(qfile->getMsgFilterPos(index.row()));
          case FieldNames::Time:
              if( project->settings->automaticTimeSettings == 0 )
                 return QString("%1.%2").arg(msg.getGmTimeWithOffsetString(project->settings->utcOffset,project->settings->dst)).arg(msg.getMicroseconds(),6,10,QLatin1Char('0'));
@@ -252,7 +252,17 @@ TableModel::TableModel(const QString & /*data*/, QObject *parent)
              {
                  int col=index.column()-FieldNames::Arg0; //arguments a zero based
                  QDltArgument arg;
-                 if (msg.getArgument(col,arg))
+                 if( project->settings->checkJSON )
+                 {
+                     QString _payload = msg.toStringPayload().trimmed();
+                     if( *_payload.begin() == '{' && _payload.endsWith("}") )
+                     {
+                         QJsonDocument doc = QJsonDocument::fromJson( msg.toStringPayload().toUtf8() );
+                         if( doc.isNull() )return QString("FALSE");
+                         else return QString("OK");
+                     }else return QString(" - ");
+                 }
+                 else if (msg.getArgument(col,arg))
                  {
                      return arg.toString();
                  }
@@ -380,12 +390,34 @@ TableModel::TableModel(const QString & /*data*/, QObject *parent)
             case FieldNames::Mode:
                 return QVariant(Qt::AlignCenter | Qt::AlignVCenter);
             case FieldNames::ArgCount:
-                return QVariant(Qt::AlignRight  | Qt::AlignVCenter);
-            case FieldNames::Payload:
-                return QVariant(Qt::AlignLeft   | Qt::AlignVCenter);
+            return QVariant(Qt::AlignRight  | Qt::AlignVCenter);
+        case FieldNames::Payload:
+            return QVariant(Qt::AlignLeft   | Qt::AlignVCenter);
         }
-    }
+     }
 
+     if ( role == Qt::FontRole )
+     {
+         QFont tableViewFont = project->settings->my_font;
+
+         if(project->settings->autoMarkFatalError
+                 && index.column() == FieldNames::Payload
+                 && ( msg.getSubtypeString() == "error" || msg.getSubtypeString() == "fatal") )
+         {
+             tableViewFont.setBold(true);
+             return QVariant(tableViewFont);
+         }
+         if(project->settings->autoMarkWarn
+                 && index.column() == FieldNames::Payload
+                 && msg.getSubtypeString() == "warn")
+         {
+             tableViewFont.setItalic(true);
+             return QVariant(tableViewFont);
+         }
+
+         return QVariant(tableViewFont);
+
+     }
      return QVariant();
  }
 

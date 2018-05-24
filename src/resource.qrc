@@ -28,6 +28,7 @@
         <file>png/document-open-recent-2_gray.png</file>
         <file>png/network-transmit-receive_connected.png</file>
         <file>png/network-transmit-receive_disconnected.png</file>
+        <file>png/store.png</file>
     </qresource>
     <qresource prefix="/icons">
         <file>png/face-glasses.png</file>

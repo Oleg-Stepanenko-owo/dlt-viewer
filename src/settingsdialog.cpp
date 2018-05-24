@@ -235,6 +235,7 @@ void SettingsDialog::writeDlg()
 
     /* table */
     ui->spinBoxFontSize->setValue(fontSize);
+    ui->spinBoxRowSize->setValue(rowSize);
 
     /* Time settings */
     ui->groupBoxAutomaticTimeSettings->setChecked(automaticTimeSettings);
@@ -365,7 +366,12 @@ void SettingsDialog::writeDlg()
     bool startup_minimized = settings->value("StartUpMinimized",false).toBool();
     ui->checkBoxStartUpMinimized->setChecked(startup_minimized);
 
-
+    ui->jsonCheck->setChecked( checkJSON?Qt::Checked:Qt::Unchecked );
+    if( checkJSON ){
+        ui->groupBoxArguments->setChecked(true);
+        showArguments = 1;
+        ui->spinBox_showArguments->setValue( showArguments );
+    }
 }
 
 void SettingsDialog::readDlg()
@@ -406,6 +412,7 @@ void SettingsDialog::readDlg()
 
     /* table */
     fontSize = ui->spinBoxFontSize->value();
+    rowSize = ui->spinBoxRowSize->value();
 
     /* Time settings */
     automaticTimeSettings = ( ui->groupBoxAutomaticTimeSettings->isChecked() == true ? 1:0);
@@ -446,6 +453,8 @@ void SettingsDialog::readDlg()
 
     bool startup_minimized = ui->checkBoxStartUpMinimized->isChecked();
     settings->setValue("StartUpMinimized",startup_minimized);
+
+    checkJSON = ( ui->jsonCheck->isChecked() == true ? 1:0);
 }
 
 void SettingsDialog::writeSettings(QMainWindow *mainwindow)
@@ -488,6 +497,7 @@ void SettingsDialog::writeSettings(QMainWindow *mainwindow)
 
     /* table */
     settings->setValue("startup/fontSize",fontSize);
+    settings->setValue("startup/rowSize", rowSize );
     settings->setValue("startup/automaticTimeSettings",automaticTimeSettings);
     settings->setValue("startup/automaticTimezoneFromDlt",automaticTimezoneFromDlt);
     settings->setValue("startup/utcOffset",utcOffset);
@@ -521,6 +531,8 @@ void SettingsDialog::writeSettings(QMainWindow *mainwindow)
     settings->setValue("startup/versionMajor", QString(PACKAGE_MAJOR_VERSION).toInt());
     settings->setValue("startup/versionMinor", QString(PACKAGE_MINOR_VERSION).toInt());
     settings->setValue("startup/versionPatch", QString(PACKAGE_PATCH_LEVEL).toInt());
+
+    settings->setValue("startup/checkJSON", checkJSON);
 }
 
 /* read the settings from config.ini */
@@ -560,6 +572,7 @@ void SettingsDialog::readSettings()
 
     /* project table */
     fontSize = settings->value("startup/fontSize",8).toInt();
+    rowSize = settings->value("startup/rowSize",25).toInt();
     automaticTimeSettings = settings->value("startup/automaticTimeSettings",1).toInt();
     automaticTimezoneFromDlt = settings->value("startup/automaticTimezoneFromDlt",1).toInt();
 
@@ -591,6 +604,9 @@ void SettingsDialog::readSettings()
     writeControl = settings->value("startup/writeControl",1).toInt();
     updateContextLoadingFile = settings->value("startup/updateContextLoadingFile",1).toInt();
     updateContextsUnregister = settings->value("startup/updateContextsUnregister",0).toInt();
+
+    storedSearchStr = settings->value("search/str").toString();
+    checkJSON = settings->value("startup/checkJSON").toInt();
 }
 
 
@@ -851,5 +867,22 @@ void SettingsDialog::on_checkBoxPluginsAutoload_stateChanged(int activated)
     {
        emit(PluginsAutoloadChanged());
     }
+}
 
+
+void SettingsDialog::addSearchStr( const std::string& str )
+{
+     DltSettingsManager *settings = DltSettingsManager::getInstance();
+     settings->setValue( "search/str", str.c_str() );
+}
+
+void SettingsDialog::on_jsonCheck_clicked(bool checked)
+{
+    checkJSON = checked;
+    if( checkJSON )
+    {
+        ui->groupBoxArguments->setChecked(true);
+        showArguments = 1;
+        ui->spinBox_showArguments->setValue( showArguments );
+    }
 }

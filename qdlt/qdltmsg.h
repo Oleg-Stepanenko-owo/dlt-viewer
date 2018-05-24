@@ -32,6 +32,8 @@
 
 #include "export_rules.h"
 
+
+class SettingsDialog;
 //! Access to a DLT message.
 /*!
   This class provide access to a single DLT message from a DLT log file.
@@ -425,7 +427,7 @@ public:
     /*!
       \return The header string.
     */
-    QString toStringHeader() const;
+    QString toStringHeader( const SettingsDialog* settings = NULL ) const;
 
     //! Print Payload content into a string.
     /*!

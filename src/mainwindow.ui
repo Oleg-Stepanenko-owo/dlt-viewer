@@ -41,9 +41,12 @@
      <widget class="DltTableView" name="tableView">
       <property name="font">
        <font>
-        <family>Courier 10 Pitch</family>
+        <family>Ubuntu</family>
         <pointsize>8</pointsize>
        </font>
+      </property>
+      <property name="cursor" stdset="0">
+       <cursorShape>ArrowCursor</cursorShape>
       </property>
       <property name="contextMenuPolicy">
        <enum>Qt::CustomContextMenu</enum>
@@ -69,13 +72,19 @@
       <property name="horizontalScrollMode">
        <enum>QAbstractItemView::ScrollPerPixel</enum>
       </property>
+      <property name="gridStyle">
+       <enum>Qt::SolidLine</enum>
+      </property>
       <attribute name="horizontalHeaderDefaultSectionSize">
-       <number>200</number>
+       <number>80</number>
       </attribute>
       <attribute name="horizontalHeaderStretchLastSection">
        <bool>false</bool>
       </attribute>
       <attribute name="verticalHeaderVisible">
+       <bool>true</bool>
+      </attribute>
+      <attribute name="verticalHeaderCascadingSectionResizes">
        <bool>false</bool>
       </attribute>
       <attribute name="verticalHeaderDefaultSectionSize">
@@ -91,7 +100,7 @@
      <x>0</x>
      <y>0</y>
      <width>1001</width>
-     <height>26</height>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -287,6 +296,11 @@
    <addaction name="separator"/>
   </widget>
   <widget class="QToolBar" name="searchToolbar">
+   <property name="font">
+    <font>
+     <pointsize>11</pointsize>
+    </font>
+   </property>
    <property name="windowTitle">
     <string>toolBar</string>
    </property>
@@ -302,6 +316,7 @@
    <addaction name="separator"/>
    <addaction name="actionFindPrevious"/>
    <addaction name="actionFindNext"/>
+   <addaction name="actionStoreRegExp"/>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
   <widget class="QDockWidget" name="dockWidgetProject">
@@ -343,13 +358,18 @@
         <enum>QFrame::Plain</enum>
        </property>
        <layout class="QGridLayout" name="gridLayout">
-        <item row="2" column="1">
-         <widget class="QCheckBox" name="filtersEnabled">
-          <property name="text">
-           <string>Filters Enabled</string>
+        <item row="0" column="0" colspan="3">
+         <widget class="QPushButton" name="applyConfig">
+          <property name="enabled">
+           <bool>false</bool>
           </property>
-          <property name="checked">
-           <bool>true</bool>
+          <property name="text">
+           <string>Apply Configuration</string>
+          </property>
+          <property name="icon">
+           <iconset resource="resource.qrc">
+            <normaloff>:/toolbar/png/weather-storm.png</normaloff>
+            <disabledoff>:/toolbar/png/weather-clear.png</disabledoff>:/toolbar/png/weather-storm.png</iconset>
           </property>
          </widget>
         </item>
@@ -363,28 +383,23 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="2">
-         <widget class="QCheckBox" name="checkBoxSortByTime">
+        <item row="3" column="0">
+         <widget class="QCheckBox" name="filtersEnabled">
           <property name="text">
-           <string>Sorted by Time</string>
+           <string>Filters Enabled</string>
           </property>
           <property name="checked">
            <bool>true</bool>
           </property>
          </widget>
         </item>
-        <item row="0" column="0" colspan="3">
-         <widget class="QPushButton" name="applyConfig">
-          <property name="enabled">
-           <bool>false</bool>
-          </property>
+        <item row="4" column="0">
+         <widget class="QCheckBox" name="checkBoxSortByTime">
           <property name="text">
-           <string>Apply Configuration</string>
+           <string>Sorted by Time</string>
           </property>
-          <property name="icon">
-           <iconset resource="resource.qrc">
-            <normaloff>:/toolbar/png/weather-storm.png</normaloff>
-            <disabledoff>:/toolbar/png/weather-clear.png</disabledoff>:/toolbar/png/weather-storm.png</iconset>
+          <property name="checked">
+           <bool>true</bool>
           </property>
          </widget>
         </item>
@@ -1490,31 +1505,48 @@
     <string>Toggle Sorted By Time</string>
    </property>
   </action>
+  <action name="actionStoreRegExp">
+   <property name="icon">
+    <iconset resource="resource.qrc">
+     <normaloff>:/toolbar/png/store.png</normaloff>:/toolbar/png/store.png</iconset>
+   </property>
+   <property name="text">
+    <string>StoreRegExp</string>
+   </property>
+  </action>
+  <action name="action_menuConfig_customCopy_to_clipboard">
+   <property name="text">
+    <string>Custom copy to Clipboard</string>
+   </property>
+  </action>
+  <action name="actionaction_JSON_parse">
+   <property name="text">
+    <string>action_JSON_parse</string>
+   </property>
+  </action>
  </widget>
  <layoutdefault spacing="6" margin="11"/>
  <customwidgets>
   <customwidget>
    <class>FilterTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>filtertreewidget.h</header>
+   <header location="global">filtertreewidget.h</header>
   </customwidget>
   <customwidget>
    <class>PluginTreeWidget</class>
    <extends>QTreeWidget</extends>
-   <header>plugintreewidget.h</header>
+   <header location="global">plugintreewidget.h</header>
   </customwidget>
   <customwidget>
    <class>DltTableView</class>
    <extends>QTableView</extends>
-   <header>dlttableview.h</header>
+   <header location="global">dlttableview.h</header>
   </customwidget>
  </customwidgets>
  <tabstops>
   <tabstop>tableView</tabstop>
   <tabstop>applyConfig</tabstop>
   <tabstop>pluginsEnabled</tabstop>
-  <tabstop>filtersEnabled</tabstop>
-  <tabstop>checkBoxSortByTime</tabstop>
   <tabstop>pluginWidget</tabstop>
   <tabstop>tabWidget</tabstop>
   <tabstop>configWidget</tabstop>

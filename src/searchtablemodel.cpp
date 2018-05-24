@@ -187,7 +187,7 @@ QVariant SearchTableModel::data(const QModelIndex &index, int role) const
 
     if ( role == Qt::BackgroundRole ) {
         //always black
-        return QVariant(QBrush(QColor(255,255,255)));
+        return index.row() % 2 ? QVariant(QBrush(QColor(255,255,255))) : QVariant(QBrush(QColor(240,240,240))) ;
     }
 
 

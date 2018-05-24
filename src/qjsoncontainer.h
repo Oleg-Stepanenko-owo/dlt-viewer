@@ -46,16 +46,16 @@ public:
     QGroupBox *treeview_groupbox;
     QVBoxLayout *obj_layout;
     void expandIt();
-    QGroupBox *browse_groupBox;
-    QLineEdit *filePath_lineEdit;
+//    QGroupBox *browse_groupBox;
+//    QLineEdit *filePath_lineEdit;
     QLineEdit *find_lineEdit;
-    QToolButton* browse_toolButton;
-    QToolButton* sortObj_toolButton;
+//    QToolButton* browse_toolButton;
+//    QToolButton* sortObj_toolButton;
     QGridLayout* tools_layout;
     QToolBar *toolbar;
     QWidget *spacer;
-    QHBoxLayout *browse_layout;
-    void setBrowseVisible(bool state);
+//    QHBoxLayout *browse_layout;
+//    void setBrowseVisible(bool state);
     QPushButton *showjson_pushbutton;
     QToolButton *findNext_toolbutton;
     QToolButton *findPrevious_toolbutton;
@@ -68,7 +68,7 @@ public:
     QJsonObject sortObjectArraysGrabObject(QJsonObject data);
     static int countStringWeight(QString inStr);
     static bool wayToSort(const QJsonValue &v1, const QJsonValue &v2);
-    void getData();
+//    void getData();
 
 private:
         QByteArray gUncompress(const QByteArray &data);
@@ -87,13 +87,13 @@ signals:
 private slots:
     void on_expandAll_checkbox_marked();
     void on_treeview_item_expanded();
-    void on_browse_toolButton_clicked();
+//    void on_browse_toolButton_clicked();
     void on_showjson_pushbutton_clicked();
-    void on_sortObj_toolButton_clicked();
+//    void on_sortObj_toolButton_clicked();
     void on_findNext_toolbutton_clicked();
     void on_findPrevious_toolbutton_clicked();
     void on_findCaseSensitivity_toolbutton_clicked();
-    void openJsonFile();
+//    void openJsonFile();
     void serviceGetDataRequestFinished(QNetworkReply* reply);
     void on_find_lineEdit_textChanged(QString text);
     void on_model_dataUpdated();

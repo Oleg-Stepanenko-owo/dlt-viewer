@@ -15,3 +15,10 @@ Parse_JSON::~Parse_JSON()
 {
     delete ui;
 }
+
+void Parse_JSON::keyPressEvent(QKeyEvent *evt)
+{
+    if(evt->key() == Qt::Key_Enter || evt->key() == Qt::Key_Return)
+        return;
+    QDialog::keyPressEvent(evt);
+}

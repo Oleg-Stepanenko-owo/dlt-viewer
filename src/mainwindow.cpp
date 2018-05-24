@@ -51,7 +51,7 @@
 #include "dlt_common.h"
 extern "C" {
 
-    #include "dlt_user.h"
+#include "dlt_user.h"
 }
 #if defined(_MSC_VER)
 #include <io.h>
@@ -335,10 +335,10 @@ void MainWindow::initView()
     //qDebug() << "Initial label width" << statusFilename->width() <<  __LINE__;
 
     statusFilename->setMinimumWidth(480); // 640 is the initial width of the label
-                                          // for some reason we need this for the very
-                                          // first call when setting the tempfile string
-                                          // unless this there are is displayed "..."
-                                          // more propper solution appreciated ...
+    // for some reason we need this for the very
+    // first call when setting the tempfile string
+    // unless this there are is displayed "..."
+    // more propper solution appreciated ...
 
     /* version string */
     statusFileVersion = new QLabel("Version: <unknown>");
@@ -374,7 +374,7 @@ void MainWindow::initView()
     searchComboBox->setInsertPolicy(QComboBox::InsertAtTop);
 
     if( !settings->storedSearchStr.isEmpty() )
-    searchComboBox->addItem(settings->storedSearchStr);
+        searchComboBox->addItem(settings->storedSearchStr);
 
     /* Initialize toolbars. Most of the construction and connection is done via the
      * UI file. See mainwindow.ui, ActionEditor and Signal & Slots editor */
@@ -536,14 +536,14 @@ void MainWindow::initFileHandling()
             qDebug() << QString("Loading default project %1").arg(settings->defaultProjectFileName);
             if(!openDlpFile(settings->defaultProjectFileName))
             {
-             if (OptManager::getInstance()->issilentMode())
-              {
-               qDebug() << QString("Cannot load default project %1").arg(settings->defaultProjectFileName);
-              }
-             else
-              {
-               QMessageBox::critical(0, QString("DLT Viewer"), QString("Cannot load default project \"%1\"").arg(settings->defaultProjectFileName));
-              }
+                if (OptManager::getInstance()->issilentMode())
+                {
+                    qDebug() << QString("Cannot load default project %1").arg(settings->defaultProjectFileName);
+                }
+                else
+                {
+                    QMessageBox::critical(0, QString("DLT Viewer"), QString("Cannot load default project \"%1\"").arg(settings->defaultProjectFileName));
+                }
 
             }
         }
@@ -556,7 +556,7 @@ void MainWindow::initFileHandling()
     if(OptManager::getInstance()->isLogFile())
     {
         openDltFile(QStringList(OptManager::getInstance()->getLogFile()));
-       /* Command line file is treated as temp file */
+        /* Command line file is treated as temp file */
         outputfileIsTemporary = true;
         outputfileIsFromCLI = true;
     }
@@ -587,14 +587,14 @@ void MainWindow::initFileHandling()
             }
             else
             {
-             if (OptManager::getInstance()->issilentMode())
-              {
-              qDebug() << QString("Cannot load temporary log file %1 %2").arg(outputfile.fileName()).arg(outputfile.errorString());
-              }
-              else
-              {
-               QMessageBox::critical(0, QString("DLT Viewer"), QString("Cannot load temporary log file \"%1\"\n%2").arg(outputfile.fileName()).arg(outputfile.errorString()));
-              }
+                if (OptManager::getInstance()->issilentMode())
+                {
+                    qDebug() << QString("Cannot load temporary log file %1 %2").arg(outputfile.fileName()).arg(outputfile.errorString());
+                }
+                else
+                {
+                    QMessageBox::critical(0, QString("DLT Viewer"), QString("Cannot load temporary log file \"%1\"\n%2").arg(outputfile.fileName()).arg(outputfile.errorString()));
+                }
             }
 
         }
@@ -604,19 +604,19 @@ void MainWindow::initFileHandling()
     {
         if(project.LoadFilter(OptManager::getInstance()->getFilterFile(),false))
         {
-       //     qDebug() << QString("Loading default filter %1").arg(settings->defaultFilterPath);
+            //     qDebug() << QString("Loading default filter %1").arg(settings->defaultFilterPath);
             filterUpdate();
             setCurrentFilters(OptManager::getInstance()->getFilterFile());
         }
         else
         {
-           if (OptManager::getInstance()->issilentMode())
+            if (OptManager::getInstance()->issilentMode())
             {
-             qDebug() << "Loading DLT Filter file failed!";
+                qDebug() << "Loading DLT Filter file failed!";
             }
-           else
+            else
             {
-            QMessageBox::critical(0, QString("DLT Viewer"),QString("Loading DLT Filter file failed!"));
+                QMessageBox::critical(0, QString("DLT Viewer"),QString("Loading DLT Filter file failed!"));
             }
         }
     }
@@ -626,22 +626,22 @@ void MainWindow::initFileHandling()
         switch ( OptManager::getInstance()->get_convertionmode() )
         {
         case e_UTF8:
-             commandLineConvertToUTF8();
+            commandLineConvertToUTF8();
             break;
         case e_DLT:
-             commandLineConvertToDLT();
+            commandLineConvertToDLT();
             break;
         case e_ASCI:
-             commandLineConvertToASCII();
+            commandLineConvertToASCII();
             break;
         case e_CSV:
-             commandLineConvertToCSV();
+            commandLineConvertToCSV();
             break;
         case e_DDLT:
-             commandLineConvertToDLTDecoded();
+            commandLineConvertToDLTDecoded();
             break;
         default:
-             commandLineConvertToASCII();
+            commandLineConvertToASCII();
             break;
         }
     }
@@ -662,7 +662,7 @@ void MainWindow::commandLineConvertToDLT()
     /* start exporter */
     DltExporter exporter;
     qDebug() << "Commandline DLT convert to " << dltFile.fileName();
-     //exporter.exportMessages(&qfile,&asciiFile,&pluginManager,DltExporter::FormatAscii,DltExporter::SelectionFiltered);
+    //exporter.exportMessages(&qfile,&asciiFile,&pluginManager,DltExporter::FormatAscii,DltExporter::SelectionFiltered);
     exporter.exportMessages(&qfile,&dltFile,&pluginManager,DltExporter::FormatDlt,DltExporter::SelectionFiltered);
     qDebug() << "DLT export to DLT file format done";
 }
@@ -738,20 +738,20 @@ void MainWindow::commandLineConvertToDLTDecoded()
 
 void MainWindow::ErrorMessage(QMessageBox::Icon level, QString title, QString message){
 
-  if (OptManager::getInstance()->issilentMode())
+    if (OptManager::getInstance()->issilentMode())
     {
-      qDebug()<<message;
+        qDebug()<<message;
     }
-  else
+    else
     {
-      if (level == QMessageBox::Critical)
-        QMessageBox::critical(this, title, message);
-      else if (level == QMessageBox::Warning)
-        QMessageBox::warning(this, title, message);
-      else if (level == QMessageBox::Information)
-        QMessageBox::information(this, title, message);
-      else
-        QMessageBox::critical(this, "ErrorMessage problem", "unhandled case");
+        if (level == QMessageBox::Critical)
+            QMessageBox::critical(this, title, message);
+        else if (level == QMessageBox::Warning)
+            QMessageBox::warning(this, title, message);
+        else if (level == QMessageBox::Information)
+            QMessageBox::information(this, title, message);
+        else
+            QMessageBox::critical(this, "ErrorMessage problem", "unhandled case");
     }
 
 }
@@ -800,18 +800,18 @@ void MainWindow::deleteactualFile()
         outputfile.close();
         if(outputfile.exists() && !outputfile.remove())
         {
-         if ( OptManager::getInstance()->issilentMode() == true )
-          {
-            qDebug() << "Can not delete temporary log file" << outputfile.fileName() << outputfile.errorString();
-          }
-        else
-         {
-            QMessageBox::critical(0, QString("DLT Viewer"),
-                                  QString("Can not delete temporary log file \"%1\"\n%2")
-                                  .arg(outputfile.fileName())
-                                  .arg(outputfile.errorString()));
-         }
-	   }
+            if ( OptManager::getInstance()->issilentMode() == true )
+            {
+                qDebug() << "Can not delete temporary log file" << outputfile.fileName() << outputfile.errorString();
+            }
+            else
+            {
+                QMessageBox::critical(0, QString("DLT Viewer"),
+                                      QString("Can not delete temporary log file \"%1\"\n%2")
+                                      .arg(outputfile.fileName())
+                                      .arg(outputfile.errorString()));
+            }
+        }
     }
 }
 
@@ -834,8 +834,8 @@ void MainWindow::closeEvent(QCloseEvent *event)
     else if(outputfileIsTemporary && !outputfileIsFromCLI)
     {
         if(QMessageBox::information(this, "DLT Viewer",
-           "You still have an unsaved temporary file open. Exit anyway?",
-           QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
+                                    "You still have an unsaved temporary file open. Exit anyway?",
+                                    QMessageBox::Yes, QMessageBox::No) == QMessageBox::Yes)
         {
             deleteactualFile();
 
@@ -856,7 +856,7 @@ void MainWindow::closeEvent(QCloseEvent *event)
 void MainWindow::on_action_menuFile_New_triggered()
 {
     QString fileName = QFileDialog::getSaveFileName(this,
-        tr("New DLT Log file"), workingDirectory.getDltDirectory(), tr("DLT Files (*.dlt);;All files (*.*)"));
+                                                    tr("New DLT Log file"), workingDirectory.getDltDirectory(), tr("DLT Files (*.dlt);;All files (*.*)"));
 
     if(fileName.isEmpty())
     {
@@ -909,7 +909,7 @@ void MainWindow::onNewTriggered(QString fileName)
 void MainWindow::on_action_menuFile_Open_triggered()
 {
     QStringList fileNames = QFileDialog::getOpenFileNames(this,
-        tr("Open one or more DLT Log files"), workingDirectory.getDltDirectory(), tr("DLT Files (*.dlt);;All files (*.*)"));
+                                                          tr("Open one or more DLT Log files"), workingDirectory.getDltDirectory(), tr("DLT Files (*.dlt);;All files (*.*)"));
 
     if(fileNames.isEmpty())
         return;
@@ -948,16 +948,16 @@ void MainWindow::openRecentFile()
         }
         workingDirectory.setDltDirectory(QFileInfo(fileName).absolutePath());
 
-         /* open existing file and append new data */
+        /* open existing file and append new data */
         if (true == openDltFile(QStringList(fileName)))
-          {
+        {
             outputfileIsTemporary = false;
             outputfileIsFromCLI = false;
-          }
+        }
         else
-          {
+        {
             removeCurrentFile(fileName);
-          }
+        }
     }
 }
 
@@ -1002,16 +1002,16 @@ bool MainWindow::openDltFile(QStringList fileNames)
         isDltFileReadOnly = false;
         //qDebug() << "Opening file(s) wo" << outputfile.fileName() << __FILE__ << __LINE__;
         if(OptManager::getInstance()->isConvert() || OptManager::getInstance()->isPlugin())
-         {
+        {
             // if dlt viewer started as converter or with plugin option load file non multithreaded
             reloadLogFile(false,false);
-         }
+        }
         else
-         {
+        {
             // normally load log file mutithreaded
             //reloadLogFile(false,false);
             reloadLogFile();
-         }
+        }
         ret = true;
     }
     else
@@ -1022,28 +1022,28 @@ bool MainWindow::openDltFile(QStringList fileNames)
             openFileNames = fileNames;
             isDltFileReadOnly = true;
             if(OptManager::getInstance()->isConvert() || OptManager::getInstance()->isPlugin())
-             {
+            {
                 // if dlt viewer started as converter or with plugin option load file non multithreaded
                 reloadLogFile(false,false);
-             }
+            }
             else
-             {
+            {
                 // normally load log file mutithreaded
                 reloadLogFile();
-             }
+            }
             ret = true;
             //qDebug() << "Loading file" << fileNames.last() << outputfile.errorString();
         }
         else
         {
             if (OptManager::getInstance()->issilentMode())
-              {
+            {
                 qDebug() << "Accessing logfile error" << fileNames.last() << outputfile.errorString();
-              }
+            }
             else
-              {
+            {
                 QMessageBox::critical(0, QString("DLT Viewer"), QString("Cannot open log file \"%1\"\n%2").arg(fileNames.last()).arg(outputfile.errorString()));
-              }
+            }
             ret = false;
         }
     }
@@ -1054,7 +1054,7 @@ bool MainWindow::openDltFile(QStringList fileNames)
 void MainWindow::on_action_menuFile_Import_DLT_Stream_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Import DLT Stream"), workingDirectory.getDltDirectory(), tr("DLT Stream file (*.*)"));
+                                                    tr("Import DLT Stream"), workingDirectory.getDltDirectory(), tr("DLT Stream file (*.*)"));
 
     if(fileName.isEmpty())
         return;
@@ -1098,7 +1098,7 @@ void MainWindow::on_action_menuFile_Import_DLT_Stream_triggered()
 void MainWindow::on_action_menuFile_Import_DLT_Stream_with_Serial_Header_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Import DLT Stream with serial header"), workingDirectory.getDltDirectory(), tr("DLT Stream file (*.*)"));
+                                                    tr("Import DLT Stream with serial header"), workingDirectory.getDltDirectory(), tr("DLT Stream file (*.*)"));
 
     if(fileName.isEmpty())
         return;
@@ -1141,7 +1141,7 @@ void MainWindow::on_action_menuFile_Import_DLT_Stream_with_Serial_Header_trigger
 void MainWindow::on_action_menuFile_Append_DLT_File_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Append DLT File"), workingDirectory.getDltDirectory(), tr("DLT File (*.dlt)"));
+                                                    tr("Append DLT File"), workingDirectory.getDltDirectory(), tr("DLT File (*.dlt)"));
 
     if(fileName.isEmpty())
         return;
@@ -1336,7 +1336,7 @@ void MainWindow::on_actionExport_triggered()
     dialog.setNameFilters(filters);
     dialog.exec();
     if(dialog.result() != QFileDialog::Accepted ||
-        dialog.selectedFiles().count() < 1)
+            dialog.selectedFiles().count() < 1)
     {
         return;
     }
@@ -1370,7 +1370,7 @@ void MainWindow::on_action_menuFile_SaveAs_triggered()
     dialog.setWindowTitle("Save DLT Log file");
     dialog.exec();
     if(dialog.result() != QFileDialog::Accepted ||
-        dialog.selectedFiles().count() < 1)
+            dialog.selectedFiles().count() < 1)
     {
         return;
     }
@@ -1521,7 +1521,7 @@ void MainWindow::on_action_menuFile_Clear_triggered()
                                   QString("Cannot delete log file \"%1\"\n%2")
                                   .arg(oldfn)
                                   .arg(dfile.errorString()));
-          qDebug() <<   QString("Cannot delete log file %1").arg(oldfn) << "in line" <<__LINE__<< "of" << __FILE__;
+            qDebug() <<   QString("Cannot delete log file %1").arg(oldfn) << "in line" <<__LINE__<< "of" << __FILE__;
         }
     }
     outputfileIsTemporary = true;
@@ -1571,7 +1571,7 @@ void MainWindow::contextLoadingFile(QDltMsg &msg)
 
 void MainWindow::reloadLogFileStop()
 {
- 
+
 }
 
 void MainWindow::reloadLogFileProgressMax(quint64 num)
@@ -1584,7 +1584,7 @@ void MainWindow::reloadLogFileProgress(quint64 num)
 {
     if( (num % 100000 == 0 && num != 0 ) && ( true == OptManager::getInstance()->isCommandlineMode()) ) // show some progres even during commandline processing
     {
-      qDebug() << "."; // showing some kind of "prgogress dots"
+        qDebug() << "."; // showing some kind of "prgogress dots"
     }
     statusProgressBar->setValue(num);
 }
@@ -1602,8 +1602,8 @@ void MainWindow::reloadLogFileVersionString(QString ecuId, QString version)
         autoloadPluginsVersionStrings.append(version);
         autoloadPluginsVersionEcus.append(ecuId);
 
-	QFontMetrics fm = QFontMetrics(statusFileVersion->font());
-	QString versionString = "Version:" + autoloadPluginsVersionStrings.join("\r\n");
+        QFontMetrics fm = QFontMetrics(statusFileVersion->font());
+        QString versionString = "Version:" + autoloadPluginsVersionStrings.join("\r\n");
         statusFileVersion->setText(fm.elidedText(versionString.simplified(), Qt::ElideRight, statusFileVersion->width()));
         statusFileVersion->setToolTip(versionString);
 
@@ -1632,7 +1632,7 @@ void MainWindow::reloadLogFileFinishFilter()
 
     // run through all viewer plugins
     // must be run in the UI thread, if some gui actions are performed
-   // if((dltIndexer->getMode() == DltFileIndexer::modeIndexAndFilter) && dltIndexer->getPluginsEnabled())
+    // if((dltIndexer->getMode() == DltFileIndexer::modeIndexAndFilter) && dltIndexer->getPluginsEnabled())
     if((dltIndexer->getMode() == DltFileIndexer::modeIndexAndFilter) && ( pluginsEnabled == true ))
     {
         QList<QDltPlugin*> activeViewerPlugins;
@@ -1698,7 +1698,7 @@ void MainWindow::reloadLogFile(bool update, bool multithreaded)
     if( 0 != settings->loggingOnlyMode )
     {
         qDebug() << "Logging only mode !";
-       // return;
+        // return;
     }
 
     /* clear autoload plugins ecu list */
@@ -1757,7 +1757,7 @@ void MainWindow::reloadLogFile(bool update, bool multithreaded)
             bool back = qfile.open(openFileNames[num],num!=0);
             if ( false == back )
             {
-              qDebug() << "ERROR opening file (s)" << openFileNames[num] << __FILE__ << __LINE__;
+                qDebug() << "ERROR opening file (s)" << openFileNames[num] << __FILE__ << __LINE__;
             }
         }
     }
@@ -1777,7 +1777,7 @@ void MainWindow::reloadLogFile(bool update, bool multithreaded)
 
     if ( true == isDltFileReadOnly )
     {
-	name += " (ReadOnly)";
+        name += " (ReadOnly)";
     }
 
     statusFilename->setText(fm.elidedText(name, Qt::ElideLeft, statusFilename->width()));
@@ -1809,15 +1809,15 @@ void MainWindow::reloadLogFile(bool update, bool multithreaded)
 
     // start indexing
     if(multithreaded == true)
-     {
+    {
         //qDebug() << "Run indexer multi thread" << __FILE__ << __LINE__;
         dltIndexer->start();
-     }
+    }
     else
-     {
+    {
         //qDebug() << "Run indexer single thread" << __FILE__ << __LINE__;
         dltIndexer->run();
-     }
+    }
 }
 
 void MainWindow::reloadLogFileDefaultFilter()
@@ -1938,9 +1938,9 @@ void MainWindow::on_actionFindNext()
 {
     //qDebug() << "on_actionFindNext" << __LINE__;
     if(!searchTextbox->text().isEmpty() && !list.contains(searchTextbox->text()))
-       {
-           list.append(searchTextbox->text());
-       }
+    {
+        list.append(searchTextbox->text());
+    }
     QString title = "Search Results";
     ui->dockWidgetSearchIndex->setWindowTitle(title);
     m_CompleterModel.setStringList(list);
@@ -1969,7 +1969,7 @@ void MainWindow::on_action_menuProject_Open_triggered()
     /* TODO: Ask for saving project if changed */
 
     QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Open DLT Project file"), workingDirectory.getDlpDirectory(), tr("DLT Project Files (*.dlp);;All files (*.*)"));
+                                                    tr("Open DLT Project file"), workingDirectory.getDlpDirectory(), tr("DLT Project Files (*.dlp);;All files (*.*)"));
 
     /* open existing project */
     if(!fileName.isEmpty())
@@ -2071,7 +2071,7 @@ void MainWindow::on_action_menuProject_Save_triggered()
     dialog.setWindowTitle("Save DLT Project file");
     dialog.exec();
     if(dialog.result() != QFileDialog::Accepted ||
-        dialog.selectedFiles().count() < 1)
+            dialog.selectedFiles().count() < 1)
     {
         return;
     }
@@ -2103,7 +2103,7 @@ QStringList MainWindow::getAvailableSerialPorts()
     QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
     QStringList portList;
 
-    for (int i = 0; i < ports.size(); i++) 
+    for (int i = 0; i < ports.size(); i++)
     {
         portList << ports.at(i).portName();
     }
@@ -2135,11 +2135,11 @@ void MainWindow::on_action_menuConfig_ECU_Add_triggered()
 
     if ( ( 1 == settings->autoConnect ) &&
          ( true == OptManager::getInstance()->issilentMode() &&
-         ( 1 == autoconnect ) ) )
+           ( 1 == autoconnect ) ) )
     {
-      qDebug() << "Autoconnect at start: in slient mode just connect to default or project defined ECU ...";
-      autoconnect = 0; // we use this tmp flag because we don not want to alter the setings file !
-      // and we need the ECU dialog of course we initiated in the GUI after start !
+        qDebug() << "Autoconnect at start: in slient mode just connect to default or project defined ECU ...";
+        autoconnect = 0; // we use this tmp flag because we don not want to alter the setings file !
+        // and we need the ECU dialog of course we initiated in the GUI after start !
     }
     else
     {
@@ -2148,24 +2148,24 @@ void MainWindow::on_action_menuConfig_ECU_Add_triggered()
 
     if( okorcancel == 1 )
     {
-       /* add new ECU to configuration */
-       EcuItem* ecuitem = new EcuItem(0);
-       dlg.setDialogToEcuItem(ecuitem);
+        /* add new ECU to configuration */
+        EcuItem* ecuitem = new EcuItem(0);
+        dlg.setDialogToEcuItem(ecuitem);
 
-       /* update ECU item */
-       ecuitem->update();
+        /* update ECU item */
+        ecuitem->update();
 
-       /* add ECU to configuration */
-       project.ecu->addTopLevelItem(ecuitem);
+        /* add ECU to configuration */
+        project.ecu->addTopLevelItem(ecuitem);
 
-       /* Update settings for recent hostnames and ports */
-       setCurrentHostname(ecuitem->getHostname());
-       setCurrentPort(ecuitem->getPort());
+        /* Update settings for recent hostnames and ports */
+        setCurrentHostname(ecuitem->getHostname());
+        setCurrentPort(ecuitem->getPort());
 
-       /* Update the ECU list in control plugins */
-       updatePluginsECUList();
+        /* Update the ECU list in control plugins */
+        updatePluginsECUList();
 
-       pluginManager.stateChanged(project.ecu->indexOfTopLevelItem(ecuitem), QDltConnection::QDltConnectionOffline,ecuitem->getHostname());
+        pluginManager.stateChanged(project.ecu->indexOfTopLevelItem(ecuitem), QDltConnection::QDltConnectionOffline,ecuitem->getHostname());
     }
     //qDebug() << __FILE__ << __LINE__;
     return;
@@ -2978,7 +2978,7 @@ void MainWindow::connectECU(EcuItem* ecuitem,bool force)
 
                 //disconnect(ecuitem->socket,0,0,0);
                 ecuitem->socket->connectToHost(ecuitem->getHostname(),ecuitem->getIpport());
-             //  qDebug()<< "Connect to ECU line " <<__LINE__ << QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss");
+                //  qDebug()<< "Connect to ECU line " <<__LINE__ << QDateTime::currentDateTime().toString("yyyy-MM-dd_hh-mm-ss");
             }
         }
         else
@@ -2990,18 +2990,18 @@ void MainWindow::connectECU(EcuItem* ecuitem,bool force)
                 ecuitem->m_serialport = new QSerialPort();
                 if ( NULL != ecuitem->m_serialport )
                 {
-                ecuitem->m_serialport->setBaudRate(ecuitem->getBaudrate(), QSerialPort::AllDirections);
-                ecuitem->m_serialport->setDataBits(QSerialPort::Data8);
-                ecuitem->m_serialport->setParity(QSerialPort::NoParity);
-                ecuitem->m_serialport->setStopBits(QSerialPort::OneStop);
-                ecuitem->m_serialport->setFlowControl(QSerialPort::NoFlowControl);
-                //ecuitem->m_serialport->waitForReadyRead(0); // this lead to immediate crash on Windows and Ubuntu
-                QThread::msleep(10);
-                connect(ecuitem->m_serialport, SIGNAL(readyRead()), this, SLOT(readyRead()));
-                connect(ecuitem->m_serialport,SIGNAL(dataTerminalReadyChanged(bool)),this,SLOT(stateChangedSerial(bool)));
-                //ecuitem->m_serialport->waitForReadyRead(10);
+                    ecuitem->m_serialport->setBaudRate(ecuitem->getBaudrate(), QSerialPort::AllDirections);
+                    ecuitem->m_serialport->setDataBits(QSerialPort::Data8);
+                    ecuitem->m_serialport->setParity(QSerialPort::NoParity);
+                    ecuitem->m_serialport->setStopBits(QSerialPort::OneStop);
+                    ecuitem->m_serialport->setFlowControl(QSerialPort::NoFlowControl);
+                    //ecuitem->m_serialport->waitForReadyRead(0); // this lead to immediate crash on Windows and Ubuntu
+                    QThread::msleep(10);
+                    connect(ecuitem->m_serialport, SIGNAL(readyRead()), this, SLOT(readyRead()));
+                    connect(ecuitem->m_serialport,SIGNAL(dataTerminalReadyChanged(bool)),this,SLOT(stateChangedSerial(bool)));
+                    //ecuitem->m_serialport->waitForReadyRead(10);
                 }
-             }
+            }
             else // serial port object already exists
             {
                 //to keep things consistent: delete old member, create new one
@@ -3065,35 +3065,35 @@ void MainWindow::connected()
             qDebug()<<"Connected to" << ecuitem->getHostname() << "at" << QDateTime::currentDateTime().toString("hh:mm:ss");
         }
     }
-checkConnectionState();
+    checkConnectionState();
 }
 
 void MainWindow::checkConnectionState()
 {
 
 
-        bool oneConnected=false;
-        bool oneTryConnect=false;
-        /* find socket which emited signal */
-        for(int num = 0; num < project.ecu->topLevelItemCount (); num++)
+    bool oneConnected=false;
+    bool oneTryConnect=false;
+    /* find socket which emited signal */
+    for(int num = 0; num < project.ecu->topLevelItemCount (); num++)
+    {
+        EcuItem *ecuitem = (EcuItem*)project.ecu->topLevelItem(num);
+        if (true== ecuitem->connected)
         {
-            EcuItem *ecuitem = (EcuItem*)project.ecu->topLevelItem(num);
-            if (true== ecuitem->connected)
-             {
-               oneConnected=true;
-               //qDebug()<<"Connect:at least one ECU connected";//<< ecuitem->getHostname;
-             }
-            if (true == ecuitem->tryToConnect)
-            {
-                oneTryConnect=true;
-            }
-
+            oneConnected=true;
+            //qDebug()<<"Connect:at least one ECU connected";//<< ecuitem->getHostname;
+        }
+        if (true == ecuitem->tryToConnect)
+        {
+            oneTryConnect=true;
         }
 
-       // qDebug()<<"Connect:at least one ECU connected"<<oneConnected;
+    }
+
+    // qDebug()<<"Connect:at least one ECU connected"<<oneConnected;
     if (true == oneConnected)
     {
-     this->ui->actionConnectAll->setIcon(QIcon(":/toolbar/png/network-transmit-receive_connected.png"));
+        this->ui->actionConnectAll->setIcon(QIcon(":/toolbar/png/network-transmit-receive_connected.png"));
     }
     else
     {
@@ -3131,44 +3131,44 @@ void MainWindow::disconnected()
             disconnect(ecuitem->socket,0,0,0);
         }
     }
-      checkConnectionState();
+    checkConnectionState();
 }
 
 
 void MainWindow::timeout()
 {
-        for(int num = 0; num < project.ecu->topLevelItemCount (); num++)
-        {
-            EcuItem *ecuitem = (EcuItem*)project.ecu->topLevelItem(num);
+    for(int num = 0; num < project.ecu->topLevelItemCount (); num++)
+    {
+        EcuItem *ecuitem = (EcuItem*)project.ecu->topLevelItem(num);
 
-            /* Try to reconnect if the ecuitem has not received
+        /* Try to reconnect if the ecuitem has not received
              * new data for long enough time.
              * If the indexer is busy indexing,
              * do not disconnect yet. Wait for future timeouts until
              * indexer is free. */
-            if( true == ecuitem->isAutoReconnectTimeoutPassed() &&  dltIndexer->tryLock())
+        if( true == ecuitem->isAutoReconnectTimeoutPassed() &&  dltIndexer->tryLock())
+        {
+            if((ecuitem->interfacetype == EcuItem::INTERFACETYPE_TCP || ecuitem->interfacetype == EcuItem::INTERFACETYPE_UDP)
+                    && ecuitem->autoReconnect && ecuitem->connected != 0
+                    && ecuitem->totalBytesRcvd == static_cast<unsigned long>(ecuitem->totalBytesRcvdLastTimeout))
             {
-                if((ecuitem->interfacetype == EcuItem::INTERFACETYPE_TCP || ecuitem->interfacetype == EcuItem::INTERFACETYPE_UDP)
-                        && ecuitem->autoReconnect && ecuitem->connected != 0
-                        && ecuitem->totalBytesRcvd == static_cast<unsigned long>(ecuitem->totalBytesRcvdLastTimeout))
-                {
-                    disconnectECU(ecuitem);
-                    ecuitem->tryToConnect = true;
-                }
-                ecuitem->totalBytesRcvdLastTimeout = ecuitem->totalBytesRcvd;
-                dltIndexer->unlock();
+                disconnectECU(ecuitem);
+                ecuitem->tryToConnect = true;
             }
-
-            if( true == ecuitem->tryToConnect && false == ecuitem->connected )
-            {
-                if( ecuitem->interfacetype == EcuItem::INTERFACETYPE_TCP || ecuitem->interfacetype == EcuItem::INTERFACETYPE_UDP )
-                {
-                qDebug() << "Reconnect timeout for" << ecuitem->getHostname();
-                }
-                connectECU(ecuitem,true);
-
-            }
+            ecuitem->totalBytesRcvdLastTimeout = ecuitem->totalBytesRcvd;
+            dltIndexer->unlock();
         }
+
+        if( true == ecuitem->tryToConnect && false == ecuitem->connected )
+        {
+            if( ecuitem->interfacetype == EcuItem::INTERFACETYPE_TCP || ecuitem->interfacetype == EcuItem::INTERFACETYPE_UDP )
+            {
+                qDebug() << "Reconnect timeout for" << ecuitem->getHostname();
+            }
+            connectECU(ecuitem,true);
+
+        }
+    }
 }
 
 void MainWindow::error(QAbstractSocket::SocketError /* socketError */)
@@ -3224,8 +3224,8 @@ void MainWindow::read(EcuItem* ecuitem)
 {
     if (nullptr == ecuitem)
     {
-       qDebug() << "Invalid ECU given in" << __FILE__ << "Line:" << __LINE__;
-       return;
+        qDebug() << "Invalid ECU given in" << __FILE__ << "Line:" << __LINE__;
+        return;
     }
 
     int32_t bytesRcvd = 0;
@@ -3241,7 +3241,7 @@ void MainWindow::read(EcuItem* ecuitem)
         ecuitem->ipcon.add(data);
 
         //qDebug() << "::read" << __LINE__;//ecuitem->socket->errorString();
-     }
+    }
     else if(ecuitem->m_serialport)
     {
         /* serial */
@@ -3258,8 +3258,8 @@ void MainWindow::read(EcuItem* ecuitem)
 
         while(((ecuitem->interfacetype == EcuItem::INTERFACETYPE_TCP ||
                 ecuitem->interfacetype == EcuItem::INTERFACETYPE_UDP) &&
-                ecuitem->ipcon.parse(qmsg)) ||
-               (ecuitem->interfacetype == EcuItem::INTERFACETYPE_SERIAL && ecuitem->serialcon.parse(qmsg)))
+               ecuitem->ipcon.parse(qmsg)) ||
+              (ecuitem->interfacetype == EcuItem::INTERFACETYPE_SERIAL && ecuitem->serialcon.parse(qmsg)))
         {
 
 
@@ -3270,19 +3270,19 @@ void MainWindow::read(EcuItem* ecuitem)
             str.pattern[3]=0x01;
 
             /* get time of day */
-            #if defined(_MSC_VER)
-               SYSTEMTIME systemtime;
-               GetSystemTime(&systemtime);
-               time_t timestamp_sec;
-               time(&timestamp_sec);
-               str.seconds = (time_t)timestamp_sec;
-               str.microseconds = (int32_t)systemtime.wMilliseconds * 1000; // for some reasons we do not have microseconds in Windows !
-            #else
-                struct timeval tv;
-                gettimeofday(&tv, NULL);
-                str.seconds = (time_t)tv.tv_sec; /* value is long */
-                str.microseconds = (int32_t)tv.tv_usec; /* value is long */
-            #endif
+#if defined(_MSC_VER)
+            SYSTEMTIME systemtime;
+            GetSystemTime(&systemtime);
+            time_t timestamp_sec;
+            time(&timestamp_sec);
+            str.seconds = (time_t)timestamp_sec;
+            str.microseconds = (int32_t)systemtime.wMilliseconds * 1000; // for some reasons we do not have microseconds in Windows !
+#else
+            struct timeval tv;
+            gettimeofday(&tv, NULL);
+            str.seconds = (time_t)tv.tv_sec; /* value is long */
+            str.microseconds = (int32_t)tv.tv_usec; /* value is long */
+#endif
 
             str.ecu[0]=0;
             str.ecu[1]=0;
@@ -3292,13 +3292,13 @@ void MainWindow::read(EcuItem* ecuitem)
             /* prepare storage header */
             if (false == qmsg.getEcuid().isEmpty()) // means the ECU ID field is NOT empty
             {
-               dlt_set_id(str.ecu,qmsg.getEcuid().toLatin1());
-               if ( ecuitem->id == ecuitem->default_id ) // in this case we take the ECUid from the dlt message
+                dlt_set_id(str.ecu,qmsg.getEcuid().toLatin1());
+                if ( ecuitem->id == ecuitem->default_id ) // in this case we take the ECUid from the dlt message
                 {
-                qDebug() << "Received ECU ID " << qmsg.getEcuid().toLatin1();
-                ecuitem->id = qmsg.getEcuid().toLatin1();
-                ecuitem->update();
-               }
+                    qDebug() << "Received ECU ID " << qmsg.getEcuid().toLatin1();
+                    ecuitem->id = qmsg.getEcuid().toLatin1();
+                    ecuitem->update();
+                }
             }
             else
             {
@@ -3332,7 +3332,7 @@ void MainWindow::read(EcuItem* ecuitem)
                         QFileInfo infoNew(info.absolutePath(),newFilename);
 
                         // rename old file
-                       outputfile.copy(outputfile.fileName(),infoNew.absoluteFilePath());
+                        outputfile.copy(outputfile.fileName(),infoNew.absoluteFilePath());
 
                         // set new start time
                         startLoggingDateTime = QDateTime::currentDateTime();
@@ -3383,7 +3383,7 @@ void MainWindow::read(EcuItem* ecuitem)
             ecuitem->ipcon.bytesReceived = 0;
             totalSyncFoundRcvd+=ecuitem->ipcon.syncFound;
             ecuitem->ipcon.syncFound = 0;
-         }
+        }
         else if(ecuitem->m_serialport)
         {
             /* serial */
@@ -3405,7 +3405,7 @@ void MainWindow::read(EcuItem* ecuitem)
     } // bytesRcvd>0
     else
     {
-      qDebug() << "bytesRcvd <= 0 error in " << __LINE__;
+        qDebug() << "bytesRcvd <= 0 error in " << __LINE__;
     }
 
 }
@@ -3447,15 +3447,15 @@ void MainWindow::updateIndex()
             item->updateMsg(num,qmsg);
         }
 
-     if ( pluginsEnabled == true )
-      {
-        pluginManager.decodeMsg(qmsg,silentMode);
-      }
+        if ( pluginsEnabled == true )
+        {
+            pluginManager.decodeMsg(qmsg,silentMode);
+        }
 
-      if(qfile.checkFilter(qmsg))
-       {
+        if(qfile.checkFilter(qmsg))
+        {
             qfile.addFilterIndex(num);
-       }
+        }
 
         for(int i = 0; i < activeViewerPlugins.size(); i++)
         {
@@ -3548,7 +3548,7 @@ void MainWindow::onTableViewSelectionChanged(const QItemSelection & selected, co
 
         if ( pluginsEnabled == true )
         {
-        pluginManager.decodeMsg(msg,!OptManager::getInstance()->issilentMode());
+            pluginManager.decodeMsg(msg,!OptManager::getInstance()->issilentMode());
         }
 
         for(int i = 0; i < activeViewerPlugins.size(); i++){
@@ -3576,7 +3576,7 @@ void MainWindow::controlMessage_ReceiveControlMessage(EcuItem *ecuitem, QDltMsg 
      * it is a version message and
        version string not already parsed */
     if(service_id == 0x13 &&
-       !autoloadPluginsVersionEcus.contains(msg.getEcuid()))
+            !autoloadPluginsVersionEcus.contains(msg.getEcuid()))
     {
         versionString(msg);
         autoloadPluginsVersionEcus.append(msg.getEcuid());
@@ -4725,24 +4725,24 @@ void MainWindow::controlMessage_UnregisterContext(QString ecuId,QString appId,QS
 
 void MainWindow::on_action_menuHelp_Support_triggered()
 {
-  QMessageBox msgBox(this);
-  msgBox.setWindowTitle("Mail-Support DLT");
-  msgBox.setTextFormat(Qt::RichText); //this is what makes the links clickable
-  QString text = "<a href='mailto:";
-  text.append(DLT_SUPPORT_MAIL_ADDRESS);
-  text.append("?Subject=DLT Question: [please add subject] ");//subject
-  text.append("&body=Please keep version information in mail:%0D%0ADLT Version: ").append(PACKAGE_VERSION).append("-");//body start
-  text.append(PACKAGE_VERSION_STATE);
-  text.append("%0D%0ABuild Date: ");
-  text.append(__DATE__);
-  text.append("-");
-  text.append(__TIME__).append("\nQt Version: ").append(QT_VERSION_STR);
-  text.append("'");//end body
-  text.append("><center>Mailto ").append(DLT_SUPPORT_NAME).append(" DLT-Viewer-Support:<br>");
-  text.append(DLT_SUPPORT_MAIL_ADDRESS).append("</center></a>");
-  msgBox.setText(text);
-  msgBox.setStandardButtons(QMessageBox::Ok);
-  msgBox.exec();
+    QMessageBox msgBox(this);
+    msgBox.setWindowTitle("Mail-Support DLT");
+    msgBox.setTextFormat(Qt::RichText); //this is what makes the links clickable
+    QString text = "<a href='mailto:";
+    text.append(DLT_SUPPORT_MAIL_ADDRESS);
+    text.append("?Subject=DLT Question: [please add subject] ");//subject
+    text.append("&body=Please keep version information in mail:%0D%0ADLT Version: ").append(PACKAGE_VERSION).append("-");//body start
+    text.append(PACKAGE_VERSION_STATE);
+    text.append("%0D%0ABuild Date: ");
+    text.append(__DATE__);
+    text.append("-");
+    text.append(__TIME__).append("\nQt Version: ").append(QT_VERSION_STR);
+    text.append("'");//end body
+    text.append("><center>Mailto ").append(DLT_SUPPORT_NAME).append(" DLT-Viewer-Support:<br>");
+    text.append(DLT_SUPPORT_MAIL_ADDRESS).append("</center></a>");
+    msgBox.setText(text);
+    msgBox.setStandardButtons(QMessageBox::Ok);
+    msgBox.exec();
 }
 
 void MainWindow::on_action_menuHelp_Info_triggered()
@@ -4758,14 +4758,14 @@ void MainWindow::on_action_menuHelp_Info_triggered()
                          #else
                              QString("Compiler: gcc\n")+
                          #endif
-                         QString("Compiler Version: %1\n\n").arg(
-                         #if defined(_MSC_VER)
+                             QString("Compiler Version: %1\n\n").arg(
+                             #if defined(_MSC_VER)
                                  _MSC_VER
-                         #else
+                             #else
                                  __VERSION__
-                         #endif
+                             #endif
                                  )+
-                         QString("Architecture: %1 Bit\n").arg(QSysInfo::WordSize)+
+                             QString("Architecture: %1 Bit\n").arg(QSysInfo::WordSize)+
                          #if (BYTE_ORDER==BIG_ENDIAN)
                              QString("Architecture: Big Endian\n\n")+
                          #else
@@ -4936,7 +4936,7 @@ void MainWindow::openRecentProject()
         /* Open existing project */
         if(!projectName.isEmpty() && openDlpFile(projectName))
         {
-           //thats it.
+            //thats it.
         }
         else
         {
@@ -5201,31 +5201,31 @@ void MainWindow::loadPlugins()
     QList<QDltPlugin*> plugins = pluginManager.getPlugins();
     for (int idx = 0; idx < plugins.size();idx++ )
     {
-      QDltPlugin* plugin = plugins[idx];
+        QDltPlugin* plugin = plugins[idx];
 
-      PluginItem* item = new PluginItem(0,plugin);
+        PluginItem* item = new PluginItem(0,plugin);
 
-      plugin->setMode((QDltPlugin::Mode) DltSettingsManager::getInstance()->value("plugin/pluginmodefor"+plugin->getName(),QVariant(QDltPlugin::ModeDisable)).toInt());
-      qDebug() << "Loading plugin" << plugin->getName() << plugin->getPluginVersion();
-      if(plugin->isViewer())
-      {
-        item->widget = plugin->initViewer();
-        item->dockWidget = new MyPluginDockWidget(item,this);
-        item->dockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
-        item->dockWidget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
-        item->dockWidget->setWidget(item->widget);
-        item->dockWidget->setObjectName(plugin->getName());
-
-        addDockWidget(Qt::LeftDockWidgetArea, item->dockWidget);
-
-        if(plugin->getMode() != QDltPlugin::ModeShow)
+        plugin->setMode((QDltPlugin::Mode) DltSettingsManager::getInstance()->value("plugin/pluginmodefor"+plugin->getName(),QVariant(QDltPlugin::ModeDisable)).toInt());
+        qDebug() << "Loading plugin" << plugin->getName() << plugin->getPluginVersion();
+        if(plugin->isViewer())
         {
-            item->dockWidget->hide();
-        }
-      }
+            item->widget = plugin->initViewer();
+            item->dockWidget = new MyPluginDockWidget(item,this);
+            item->dockWidget->setAllowedAreas(Qt::AllDockWidgetAreas);
+            item->dockWidget->setFeatures(QDockWidget::DockWidgetClosable | QDockWidget::DockWidgetMovable | QDockWidget::DockWidgetFloatable);
+            item->dockWidget->setWidget(item->widget);
+            item->dockWidget->setObjectName(plugin->getName());
 
-      item->update();
-      project.plugin->addTopLevelItem(item);
+            addDockWidget(Qt::LeftDockWidgetArea, item->dockWidget);
+
+            if(plugin->getMode() != QDltPlugin::ModeShow)
+            {
+                item->dockWidget->hide();
+            }
+        }
+
+        item->update();
+        project.plugin->addTopLevelItem(item);
 
     }
 
@@ -5287,16 +5287,16 @@ void MainWindow::updatePlugin(PluginItem *item)
     if (item->getMode() != QDltPlugin::ModeDisable) // that means any kind of enabling
     {
         // in case there is an explicitely given file or directpory name we want to use this of course
-     //qDebug() << "Versionstring" << target_version_string << target_version_string.isEmpty();
-     if(settings->pluginsAutoloadPath != 0 && ( conffilename.isEmpty() == true ) && ( target_version_string.isEmpty() != true )  )
-         {
+        //qDebug() << "Versionstring" << target_version_string << target_version_string.isEmpty();
+        if(settings->pluginsAutoloadPath != 0 && ( conffilename.isEmpty() == true ) && ( target_version_string.isEmpty() != true )  )
+        {
             qDebug() << "Trigger autoload with version" << target_version_string;
             pluginsAutoload(target_version_string);
-         }
-     else // we eventually provoke an error message, but sometimes even a decoder plugin works with default settings
-       {
-       ret = item->getPlugin()->loadConfig(conffilename);
-       }
+        }
+        else // we eventually provoke an error message, but sometimes even a decoder plugin works with default settings
+        {
+            ret = item->getPlugin()->loadConfig(conffilename);
+        }
         //qDebug() << "Enable or show" << item->getPlugin()->getName() << __LINE__ << __FILE__;
         if ( false == ret )
         {
@@ -5368,7 +5368,7 @@ void MainWindow::versionString(QDltMsg &msg)
 
 void MainWindow::triggerPluginsAutoload()
 {
-  pluginsAutoload(target_version_string);
+    pluginsAutoload(target_version_string);
 }
 
 void MainWindow::pluginsAutoload(QString version)
@@ -5489,7 +5489,7 @@ void MainWindow::on_action_menuPlugin_Show_triggered() {
                 applyConfigEnabled(true);
             }
         }else{
-             ErrorMessage(QMessageBox::Warning,QString("DLT Viewer"),QString("The selected Plugin is already active."));
+            ErrorMessage(QMessageBox::Warning,QString("DLT Viewer"),QString("The selected Plugin is already active."));
         }
     }
     else {
@@ -5672,7 +5672,7 @@ void MainWindow::on_action_menuFilter_Save_As_triggered()
 {
 
     QString fileName = QFileDialog::getSaveFileName(this,
-        tr("Save DLT Filters"), workingDirectory.getDlfDirectory(), tr("DLT Filter File (*.dlf);;All files (*.*)"));
+                                                    tr("Save DLT Filters"), workingDirectory.getDlfDirectory(), tr("DLT Filter File (*.dlf);;All files (*.*)"));
 
     if(!fileName.isEmpty())
     {
@@ -5687,7 +5687,7 @@ void MainWindow::on_action_menuFilter_Save_As_triggered()
 void MainWindow::on_action_menuFilter_Load_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Load DLT Filter file"), workingDirectory.getDlfDirectory(), tr("DLT Filter Files (*.dlf);;All files (*.*)"));
+                                                    tr("Load DLT Filter file"), workingDirectory.getDlfDirectory(), tr("DLT Filter Files (*.dlf);;All files (*.*)"));
 
     openDlfFile(fileName,true);
 }
@@ -6111,13 +6111,13 @@ void MainWindow::dropEvent(QDropEvent *event)
                 if(list.size()!=1)
                 {
 
-                item = QInputDialog::getItem(this, tr("DLT Viewer"),
-                                                         tr("Select Plugin to load configuration:"), items, 0, false, &ok);
+                    item = QInputDialog::getItem(this, tr("DLT Viewer"),
+                                                 tr("Select Plugin to load configuration:"), items, 0, false, &ok);
                 }
                 else
                 {
-                   item=items.at(0);
-                   ok=true;
+                    item=items.at(0);
+                    ok=true;
                 }
                 if (ok && !item.isEmpty())
                 {
@@ -6199,7 +6199,7 @@ void MainWindow::iterateDecodersForMsg(QDltMsg &msg, int triggeredByUser)
 {
     if ( pluginsEnabled == true )
     {
-    pluginManager.decodeMsg(msg,triggeredByUser);
+        pluginManager.decodeMsg(msg,triggeredByUser);
     }
 }
 
@@ -6221,7 +6221,7 @@ void MainWindow::on_action_menuConfig_Copy_to_clipboard_triggered()
 void MainWindow::on_action_menuFilter_Append_Filters_triggered()
 {
     QString fileName = QFileDialog::getOpenFileName(this,
-        tr("Load DLT Filter file"), workingDirectory.getDlfDirectory(), tr("DLT Filter Files (*.dlf);;All files (*.*)"));
+                                                    tr("Load DLT Filter file"), workingDirectory.getDlfDirectory(), tr("DLT Filter Files (*.dlf);;All files (*.*)"));
 
     openDlfFile(fileName,false);
 }
@@ -6267,7 +6267,7 @@ int MainWindow::nearest_line(int line){
                 if((qfile.getMsgFilterPos(i)-line)<(line-qfile.getMsgFilterPos(lastFound)))
                     lastFound = i;
                 break;
-           }
+            }
         }
         row = lastFound;
     }
@@ -6433,33 +6433,33 @@ void MainWindow::syncCheckBoxesAndMenu()
 {
     ui->actionToggle_SortByTimeEnabled->setChecked(ui->checkBoxSortByTime->isChecked());
     if (ui->checkBoxSortByTime->isChecked())
-        {
-            ui->actionToggle_SortByTimeEnabled->setText("Stop sorting by Time");
-        }
-        else
-        {
-            ui->actionToggle_SortByTimeEnabled->setText("Sort by Time");
-        }
+    {
+        ui->actionToggle_SortByTimeEnabled->setText("Stop sorting by Time");
+    }
+    else
+    {
+        ui->actionToggle_SortByTimeEnabled->setText("Sort by Time");
+    }
 
     ui->actionToggle_PluginsEnabled->setChecked(ui->pluginsEnabled->isChecked());
     if (ui->pluginsEnabled->isChecked())
-        {
-            ui->actionToggle_PluginsEnabled->setText("Disable Plugins");
-        }
-        else
-        {
-            ui->actionToggle_PluginsEnabled->setText("Enable Plugins");
-        }
+    {
+        ui->actionToggle_PluginsEnabled->setText("Disable Plugins");
+    }
+    else
+    {
+        ui->actionToggle_PluginsEnabled->setText("Enable Plugins");
+    }
 
     ui->actionToggle_FiltersEnabled->setChecked(ui->filtersEnabled->isChecked());
     if (ui->filtersEnabled->isChecked())
-        {
-            ui->actionToggle_FiltersEnabled->setText("Disable Filters");
-        }
-        else
-        {
-            ui->actionToggle_FiltersEnabled->setText("Enable Filters");
-        }
+    {
+        ui->actionToggle_FiltersEnabled->setText("Disable Filters");
+    }
+    else
+    {
+        ui->actionToggle_FiltersEnabled->setText("Enable Filters");
+    }
 
 
 }
@@ -6596,7 +6596,7 @@ void MainWindow::on_comboBoxFilterSelection_activated(const QString &arg1)
 
         /* check if filename and qfile size is matching cache entry */
         if(index->allIndexSize == qfile.size() &&
-           index->dltFileName == qfile.getFileName())
+                index->dltFileName == qfile.getFileName())
         {
             /* save selection */
             saveSelection();
@@ -6666,9 +6666,9 @@ void MainWindow::on_actionDefault_Filter_Reload_triggered()
         {
             /* creation of directory fails */
             QMessageBox::critical(0, QString("DLT Viewer"),
-                                           QString("Cannot create directory to store cache files!\n\n")+dir.absolutePath(),
-                                           QMessageBox::Ok,
-                                           QMessageBox::Ok);
+                                  QString("Cannot create directory to store cache files!\n\n")+dir.absolutePath(),
+                                  QMessageBox::Ok,
+                                  QMessageBox::Ok);
             return;
         }
     }
@@ -6695,7 +6695,7 @@ void MainWindow::applyConfigEnabled(bool enabled)
     if(true == enabled)
     {
         /* show apply config button */
-       // ui->applyConfig->startPulsing(pulseButtonColor);
+        // ui->applyConfig->startPulsing(pulseButtonColor);
         ui->actionApply_Configuration->setCheckable(true);
         ui->actionApply_Configuration->setChecked(true);
         ui->applyConfig->setEnabled(true);
@@ -6764,22 +6764,22 @@ void MainWindow::on_actionStoreRegExp_triggered()
 
 void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
 {
-        QJsonDocument doc = QJsonDocument::fromJson( index.data().toString().toUtf8() );
-        QString clip_str;
+    QJsonDocument doc = QJsonDocument::fromJson( index.data().toString().toUtf8() );
+    QString clip_str;
 
-        if( !doc.isEmpty() )
-        {
-            QJsonObject json_obj = doc.object();
-            QJsonValue val = json_obj.take("function");
-            clip_str = val.toString();
-        }
-        else
-        {
-            clip_str = index.data().toString();
-        }
+    if( !doc.isEmpty() )
+    {
+        QJsonObject json_obj = doc.object();
+        QJsonValue val = json_obj.take("function");
+        clip_str = val.toString();
+    }
+    else
+    {
+        clip_str = index.data().toString();
+    }
 
-        QClipboard *clipboard = QApplication::clipboard();
-        clipboard->setText( clip_str );
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText( clip_str );
 }
 
 void MainWindow::on_action_menuConfig_customCopy_to_clipboard_triggered()

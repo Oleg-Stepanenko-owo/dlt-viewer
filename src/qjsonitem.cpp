@@ -17,12 +17,6 @@
 
 **********************************************/
 
-/*
- * Modified by Yuriy Kuzin
- * Updated to support diff
- *
- */
-
 #include "qjsonitem.h"
 
 QJsonTreeItem::QJsonTreeItem(QJsonTreeItem *parent)
@@ -96,7 +90,7 @@ void QJsonTreeItem::setIdxRelation(QModelIndex idxPointer)
  */
 void QJsonTreeItem::setColor(const QColor &color)
 {
-        mColor = color;
+    mColor = color;
 }
 
 /* Get index of relation from another model
@@ -166,8 +160,8 @@ QString QJsonTreeItem::typeName() const
     {
         return QString("Undefined");
     }
-   qDebug()<<"Fatal error wrong json type";
-   return QString("Fatal");
+    qDebug()<<"Fatal error wrong json type";
+    return QString("Fatal");
 }
 
 QJsonTreeItem* QJsonTreeItem::load(const QJsonValue& value, QJsonTreeItem* parent)

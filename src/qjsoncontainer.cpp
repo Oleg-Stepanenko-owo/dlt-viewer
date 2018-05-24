@@ -1,9 +1,22 @@
-/* Author: Yuriy Kuzin
- * Description: widget to load JSON from file or http source
- *              or you can paste it manualy into text area
- *              evrytime model will be updated
- *              it's possible to perform search in text view and json view
- */
+/***********************************************
+    Copyright (C) 2014  Schutz Sacha
+    This file is part of QJsonModel (https://github.com/dridk/QJsonmodel).
+
+    QJsonModel is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+
+    QJsonModel is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with QJsonModel.  If not, see <http://www.gnu.org/licenses/>.
+
+**********************************************/
+
 #include "qjsoncontainer.h"
 
 QJsonContainer::QJsonContainer(QWidget *parent):
@@ -61,9 +74,9 @@ QJsonContainer::QJsonContainer(QWidget *parent):
     expandAll_Checkbox = new QCheckBox(toolbar);
     expandAll_Checkbox->setText(QString(tr("Expand")));
 
-    sortObj_toolButton=new QToolButton(toolbar);
-    sortObj_toolButton->setText(tr("Sort"));
-    sortObj_toolButton->setToolTip(tr("Sort objects inside array\nmaybe helpful when order does not relevant"));
+//    sortObj_toolButton=new QToolButton(toolbar);
+//    sortObj_toolButton->setText(tr("Sort"));
+//    sortObj_toolButton->setToolTip(tr("Sort objects inside array\nmaybe helpful when order does not relevant"));
 
     tools_layout=new QGridLayout(toolbar);
     tools_layout->setContentsMargins(0,0,0,0);
@@ -71,6 +84,7 @@ QJsonContainer::QJsonContainer(QWidget *parent):
     find_lineEdit->setPlaceholderText(tr("Serach for..."));
     find_lineEdit->setToolTip(tr("Enter text and press enter to search"));
     find_lineEdit->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
+    find_lineEdit->setFocus();
     findNext_toolbutton=new QToolButton(toolbar);
     findNext_toolbutton->setText(">>");
     findNext_toolbutton->setToolTip("Find Next");
@@ -94,7 +108,7 @@ QJsonContainer::QJsonContainer(QWidget *parent):
     spacer = new QWidget();
     spacer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
     toolbar->addWidget(spacer);
-    toolbar->addWidget(sortObj_toolButton);
+//    toolbar->addWidget(sortObj_toolButton);
 
     tools_layout->addWidget(toolbar,0,0);
 
@@ -102,20 +116,20 @@ QJsonContainer::QJsonContainer(QWidget *parent):
     currentFindText=find_lineEdit->text();
     currentFindIndexId=-1;
 
-    browse_groupBox=new QGroupBox(treeview_groupbox);
-    browse_layout=new QHBoxLayout(browse_groupBox);
-    browse_layout->setContentsMargins(0,0,0,0);
-    filePath_lineEdit=new QLineEdit(browse_groupBox);
-    filePath_lineEdit->setPlaceholderText(tr("Select file or use URL to load json data"));
-    filePath_lineEdit->setToolTip(tr("Select file or use full path/URL and hit enter to load json data"));
-    browse_toolButton=new QToolButton(browse_groupBox);
-    browse_toolButton->setText(tr("..."));
-    //filePath_lineEdit->setStyleSheet("border: 2");
-    qDebug()<<"treeview_layout adding widgets";
-    browse_layout->addWidget(filePath_lineEdit,1);
-    browse_layout->addWidget(browse_toolButton,0);
-    browse_groupBox->setLayout(browse_layout);
-    treeview_layout->addWidget(browse_groupBox,0);
+    //    browse_groupBox=new QGroupBox(treeview_groupbox);
+    //    browse_layout=new QHBoxLayout(browse_groupBox);
+    //    browse_layout->setContentsMargins(0,0,0,0);
+    //    filePath_lineEdit=new QLineEdit(browse_groupBox);
+    //    filePath_lineEdit->setPlaceholderText(tr("Select file or use URL to load json data"));
+    //    filePath_lineEdit->setToolTip(tr("Select file or use full path/URL and hit enter to load json data"));
+    //    browse_toolButton=new QToolButton(browse_groupBox);
+    //    browse_toolButton->setText(tr("..."));
+    //    //filePath_lineEdit->setStyleSheet("border: 2");
+    //    qDebug()<<"treeview_layout adding widgets";
+    //    browse_layout->addWidget(filePath_lineEdit,1);
+    //    browse_layout->addWidget(browse_toolButton,0);
+    //    browse_groupBox->setLayout(browse_layout);
+    //    treeview_layout->addWidget(browse_groupBox,0);
 
     //treeview_layout->addWidget(expandAll_Checkbox,0,Qt::AlignLeft);
     treeview_layout->addLayout(tools_layout);
@@ -138,14 +152,15 @@ QJsonContainer::QJsonContainer(QWidget *parent):
     //treeview->setMinimumSize(500,500);
 
     //read treeview stylesheet file from app resources
-    QFile file(":/qss/treeview.qss");
+    QFile file(":/qss/qjsontreeview.qss");
     if(file.open(QIODevice::ReadOnly))
-        {
-            QString styleSheet = file.readAll();
-            file.close();
-            //apply stylesheet to treeview
-            treeview->setStyleSheet(styleSheet);
-        }
+    {
+        qDebug() << "!!!file loaded";
+        QString styleSheet = file.readAll();
+        file.close();
+        //apply stylesheet to treeview
+        treeview->setStyleSheet(styleSheet);
+    } else { qDebug() << "!!! not file loaded"; }
     treeview->ensurePolished();
     treeview->setContextMenuPolicy(Qt::CustomContextMenu);
 
@@ -158,9 +173,9 @@ QJsonContainer::QJsonContainer(QWidget *parent):
     //connect(treeview, SIGNAL(customContextMenuRequested(const QPoint&)),this, SLOT(ShowContextMenu(const QPoint&)));
     connect(treeview, SIGNAL(expanded(const QModelIndex& )),this, SLOT(on_treeview_item_expanded()));
     connect(expandAll_Checkbox, SIGNAL(stateChanged(int)), this, SLOT(on_expandAll_checkbox_marked()));
-    connect(browse_toolButton,SIGNAL(clicked()),this,SLOT(on_browse_toolButton_clicked()));
-    connect(sortObj_toolButton,SIGNAL(clicked()),this,SLOT(on_sortObj_toolButton_clicked()));
-    connect(filePath_lineEdit,SIGNAL(returnPressed()),this,SLOT(openJsonFile()));
+    //    connect(browse_toolButton,SIGNAL(clicked()),this,SLOT(on_browse_toolButton_clicked()));
+//    connect(sortObj_toolButton,SIGNAL(clicked()),this,SLOT(on_sortObj_toolButton_clicked()));
+    //    connect(filePath_lineEdit,SIGNAL(returnPressed()),this,SLOT(openJsonFile()));
     connect(showjson_pushbutton,SIGNAL(clicked()),this,SLOT(on_showjson_pushbutton_clicked()));
     connect(find_lineEdit,SIGNAL(returnPressed()),this,SLOT(findText()));
     connect(find_lineEdit,SIGNAL(textChanged(QString)),this,SLOT(on_find_lineEdit_textChanged(QString)));
@@ -179,10 +194,10 @@ QJsonContainer::~QJsonContainer()
     model->deleteLater();
     treeview->deleteLater();
     expandAll_Checkbox->deleteLater();
-    browse_groupBox->deleteLater();
-    filePath_lineEdit->deleteLater();
-    browse_toolButton->deleteLater();
-    browse_layout->deleteLater();
+    //    browse_groupBox->deleteLater();
+    //    filePath_lineEdit->deleteLater();
+    //    browse_toolButton->deleteLater();
+    //    browse_layout->deleteLater();
     treeview_layout->deleteLater();
     treeview_groupbox->deleteLater();
 }
@@ -191,28 +206,28 @@ void QJsonContainer::findText()
 {
     //viewjson_plaintext->moveCursor(QTextCursor::Start);
     if(viewjson_plaintext->isVisible())
-        {
+    {
         //ignore search case if button not pressed
-            if(!findCaseSensitivity_toolbutton->isChecked())
-            {
-                viewjson_plaintext->find(find_lineEdit->text());
-            }
-            else
-            {
-                viewjson_plaintext->find(find_lineEdit->text(),QTextDocument::FindCaseSensitively);
-            }
-        }
-    else
+        if(!findCaseSensitivity_toolbutton->isChecked())
         {
-            //works all values to stringlist
-            //QStringList strings = extractStringsFromModel(model, QModelIndex());
-            //QModelIndex idx=treeview->currentIndex();
-            //QStringList strings = extractStringsFromModel(model, idx);
-
-            //qDebug()<<"##################"<<strings;
-            findTextJsonIndexHandler(true);
-
+            viewjson_plaintext->find(find_lineEdit->text());
         }
+        else
+        {
+            viewjson_plaintext->find(find_lineEdit->text(),QTextDocument::FindCaseSensitively);
+        }
+    }
+    else
+    {
+        //works all values to stringlist
+        //QStringList strings = extractStringsFromModel(model, QModelIndex());
+        //QModelIndex idx=treeview->currentIndex();
+        //QStringList strings = extractStringsFromModel(model, idx);
+
+        //qDebug()<<"##################"<<strings;
+        findTextJsonIndexHandler(true);
+
+    }
 }
 
 void QJsonContainer::on_findNext_toolbutton_clicked()
@@ -223,27 +238,28 @@ void QJsonContainer::on_findNext_toolbutton_clicked()
 void QJsonContainer::on_findPrevious_toolbutton_clicked()
 {
     if(viewjson_plaintext->isVisible())
-        {
+    {
 
-            if(!findCaseSensitivity_toolbutton->isChecked())
-            {
-                viewjson_plaintext->find(find_lineEdit->text(),QTextDocument::FindBackward);
-            }
-            else
-            {
-                viewjson_plaintext->find(find_lineEdit->text(),QTextDocument::FindBackward | QTextDocument::FindCaseSensitively);
-            }
-        }
-    else
+        if(!findCaseSensitivity_toolbutton->isChecked())
         {
-            findTextJsonIndexHandler(false);
+            viewjson_plaintext->find(find_lineEdit->text(),QTextDocument::FindBackward);
         }
+        else
+        {
+            viewjson_plaintext->find(find_lineEdit->text(),QTextDocument::FindBackward | QTextDocument::FindCaseSensitively);
+        }
+    }
+    else
+    {
+        findTextJsonIndexHandler(false);
+    }
 }
 
 void QJsonContainer::on_findCaseSensitivity_toolbutton_clicked()
 {
     currentFindIndexesList.clear();
     currentFindText=find_lineEdit->text();
+    qDebug() << currentFindText;
     currentFindIndexesList=findModelText(model, QModelIndex());
     currentFindIndexId=-1;
 }
@@ -260,99 +276,104 @@ void QJsonContainer::findTextJsonIndexHandler(bool direction)
 {
 
     if(currentFindText.isEmpty() || currentFindText!=find_lineEdit->text())
-        {
-            currentFindIndexesList.clear();
-            currentFindText=find_lineEdit->text();
-            currentFindIndexesList=findModelText(model, QModelIndex());
-            currentFindIndexId=-1;
-            qDebug()<<"##################"<<currentFindIndexesList;
-        }
-//QList<QModelIndex> tempList=currentFindIndexesList;
-//        if(!direction)
-//        {
-//            for(int k = 0; k < (tempList.size()/2); k++) tempList.swap(k,tempList.size()-(1+k));
-//        }
+    {
+        currentFindIndexesList.clear();
+        currentFindText=find_lineEdit->text();
+        currentFindIndexesList=findModelText(model, QModelIndex());
+        currentFindIndexId=-1;
+        qDebug() << "findTextJsonIndexHandler: " << currentFindIndexesList;
+        qDebug() << "findTextJsonIndexHandler: " << currentFindText;
+    }
+    //QList<QModelIndex> tempList=currentFindIndexesList;
+    //        if(!direction)
+    //        {
+    //            for(int k = 0; k < (tempList.size()/2); k++) tempList.swap(k,tempList.size()-(1+k));
+    //        }
+
     if(currentFindIndexesList.count()>0 && currentFindIndexId<currentFindIndexesList.count()-1 && direction)
-        {
-            currentFindIndexId++;
-        }
+    {
+        currentFindIndexId++;
+    }
     else if(currentFindIndexesList.count()>0 && currentFindIndexId>0 && currentFindIndexId<=currentFindIndexesList.count()-1 && !direction)
-        {
-            currentFindIndexId--;
-        }
+    {
+        currentFindIndexId--;
+    }
 
     else if(currentFindIndexesList.count()>0 && (currentFindIndexId==currentFindIndexesList.count()-1 || currentFindIndexId==0))
-        {
-            QRect widgetRect = treeview->visualRect(currentFindIndexesList[currentFindIndexId]);
-            QToolTip::showText( treeview->mapToGlobal( QPoint(widgetRect.center().x(),widgetRect.center().y()) ), (!direction)?tr("The last match! Next item will be from the end"):tr("The last match! Next item will be from the start"),treeview,QRect(100, 200, 11, 16),3000 );
-            currentFindIndexId=-1;
-        }
+    {
+        QRect widgetRect = treeview->visualRect(currentFindIndexesList[currentFindIndexId]);
+        QToolTip::showText( treeview->mapToGlobal( QPoint(widgetRect.center().x(),widgetRect.center().y()) ), (!direction)?tr("The last match! Next item will be from the end"):tr("The last match! Next item will be from the start"),treeview,QRect(100, 200, 11, 16),3000 );
+        currentFindIndexId=-1;
+    }
     else if(currentFindIndexesList.count()>0 && currentFindIndexId==-1 && !direction)
-        {
-            currentFindIndexId=currentFindIndexesList.count()-1;
-        }
+    {
+        currentFindIndexId=currentFindIndexesList.count()-1;
+    }
+
     if(currentFindIndexesList.count()==0)
     {
         QRect widgetRect = find_lineEdit->contentsRect();
         QToolTip::showText( find_lineEdit->mapToGlobal( QPoint(widgetRect.center().x(),widgetRect.center().y()) ), tr("<b><font \"color\"=red>Text Not Found!</font></b>"),0,QRect(100, 200, 11, 16),3000 );
     }
     if(currentFindIndexId>=0)
-        {
-            treeview->setCurrentIndex(currentFindIndexesList[currentFindIndexId]);
-        }
+    {
+        qDebug() << treeview;
+        qDebug() << "setCurrentIndex: " << currentFindIndexesList[currentFindIndexId];
+        treeview->setCurrentIndex(currentFindIndexesList[currentFindIndexId]);
+    }
 }
 
-void QJsonContainer::setBrowseVisible(bool state)
-{
-    browse_groupBox->setVisible(state);
-}
+//void QJsonContainer::setBrowseVisible(bool state)
+//{
+//    browse_groupBox->setVisible(state);
+//}
 
 void QJsonContainer::on_showjson_pushbutton_clicked()
 {
     if(viewjson_plaintext->isVisible())
-        {
-            viewjson_plaintext->setVisible(false);
-            treeview->setVisible(true);
-            loadJson(viewjson_plaintext->toPlainText());
-            showjson_pushbutton->setText(tr("Show Json Text"));
-        }
+    {
+        viewjson_plaintext->setVisible(false);
+        treeview->setVisible(true);
+        loadJson(viewjson_plaintext->toPlainText());
+        showjson_pushbutton->setText(tr("Show Json Text"));
+    }
     else
-        {
-            viewjson_plaintext->setVisible(true);
-            treeview->setVisible(false);
-            showjson_pushbutton->setText(tr("Show Json View"));
-        }
+    {
+        viewjson_plaintext->setVisible(true);
+        treeview->setVisible(false);
+        showjson_pushbutton->setText(tr("Show Json View"));
+    }
     emit jsonUpdated();
 }
 
-void QJsonContainer::on_browse_toolButton_clicked()
-{
-    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),"",tr("Files (*.json *.jsn *.txt);;All Files (*)"));
-    filePath_lineEdit->setText(fileName);
-    openJsonFile();
+//void QJsonContainer::on_browse_toolButton_clicked()
+//{
+//    QString fileName = QFileDialog::getOpenFileName(this, tr("Open File"),"",tr("Files (*.json *.jsn *.txt);;All Files (*)"));
+//    filePath_lineEdit->setText(fileName);
+//    openJsonFile();
 
-}
+//}
 
-void QJsonContainer::openJsonFile()
-{
-    if(!filePath_lineEdit->text().contains("http://",Qt::CaseInsensitive) && !filePath_lineEdit->text().contains("https://",Qt::CaseInsensitive))
-        {
-            qDebug()<<"reloading file";
-            QFile file(filePath_lineEdit->text());
-            if(file.open(QIODevice::ReadOnly))
-                {
-                    QString data = file.readAll();
-                    file.close();
-                    loadJson(data);
-                }
-        }
-    else
-        {
-            qDebug()<<"downloading";
-            getData();
-        }
-    emit sOpenJsonFile();
-}
+//void QJsonContainer::openJsonFile()
+//{
+//    if(!filePath_lineEdit->text().contains("http://",Qt::CaseInsensitive) && !filePath_lineEdit->text().contains("https://",Qt::CaseInsensitive))
+//        {
+//            qDebug()<<"reloading file";
+//            QFile file(filePath_lineEdit->text());
+//            if(file.open(QIODevice::ReadOnly))
+//                {
+//                    QString data = file.readAll();
+//                    file.close();
+//                    loadJson(data);
+//                }
+//        }
+//    else
+//        {
+//            qDebug()<<"downloading";
+//            getData();
+//        }
+//    emit sOpenJsonFile();
+//}
 
 void QJsonContainer::loadJson(QJsonDocument data)
 {
@@ -373,21 +394,21 @@ void QJsonContainer::loadJson(QString data)
 
 void QJsonContainer::on_expandAll_checkbox_marked()
 {
-//qDebug()<<"marked";
+    //qDebug()<<"marked";
     if (expandAll_Checkbox->isChecked())
-        {
-            treeview->expandAll();
-            treeview->resizeColumnToContents(0);
-            treeview->resizeColumnToContents(1);
-            treeview->resizeColumnToContents(2);
-            //treeview->setColumnWidth(2,300);
-            //treeview->viewport()->setBackgroundRole(QPalette::Dark);
-            //qDebug()<<treeview->indexAt(QPoint(50,50)).;
-        }
+    {
+        treeview->expandAll();
+        treeview->resizeColumnToContents(0);
+        treeview->resizeColumnToContents(1);
+        treeview->resizeColumnToContents(2);
+        //treeview->setColumnWidth(2,300);
+        //treeview->viewport()->setBackgroundRole(QPalette::Dark);
+        //qDebug()<<treeview->indexAt(QPoint(50,50)).;
+    }
     else
-        {
-            treeview->collapseAll();
-        }
+    {
+        treeview->collapseAll();
+    }
 }
 
 void QJsonContainer::expandIt()
@@ -400,13 +421,13 @@ void QJsonContainer::on_treeview_item_expanded()
 {
     //qDebug()<<"expanded";
     if(!expandAll_Checkbox->isChecked())
-        {
-            QTreeView *treeviewcall = (QTreeView *)sender();
-            treeviewcall->resizeColumnToContents(0);
-            treeviewcall->resizeColumnToContents(1);
-            treeviewcall->resizeColumnToContents(2);
-            //treeviewcall->setColumnWidth(2,300);
-        }
+    {
+        QTreeView *treeviewcall = (QTreeView *)sender();
+        treeviewcall->resizeColumnToContents(0);
+        treeviewcall->resizeColumnToContents(1);
+        treeviewcall->resizeColumnToContents(2);
+        //treeviewcall->setColumnWidth(2,300);
+    }
 }
 
 QJsonModel* QJsonContainer::getJsonModel()
@@ -447,11 +468,11 @@ int QJsonContainer::countStringWeight(QString inStr)
 {
     int total=0;
     for(int i=0; i <= inStr.length()-1; i++)
-        {
-            QChar ch = inStr.at(i);
+    {
+        QChar ch = inStr.at(i);
 
-            total=total+ch.unicode();
-        }
+        total=total+ch.unicode();
+    }
     total=total*inStr.length();
     //qDebug()<<total;
     return total;
@@ -461,14 +482,14 @@ bool QJsonContainer::wayToSort(const QJsonValue &v1,const QJsonValue &v2)
 {
     // qDebug()<<"call";
     if(v1.isObject() && v2.isObject())
-        {
-            return countStringWeight(QJsonDocument(v1.toObject()).toJson()) < countStringWeight(QJsonDocument(v2.toObject()).toJson());
-        }
+    {
+        return countStringWeight(QJsonDocument(v1.toObject()).toJson()) < countStringWeight(QJsonDocument(v2.toObject()).toJson());
+    }
     else if(v1.isDouble() && v2.isDouble())
-        {
-            //qDebug()<<v1<<" "<<v2;
-            return v1.toDouble()<v2.toDouble();
-        }
+    {
+        //qDebug()<<v1<<" "<<v2;
+        return v1.toDouble()<v2.toDouble();
+    }
     return -1;
 }
 //sort array
@@ -478,35 +499,35 @@ QJsonArray QJsonContainer::sortObjectArraysGrabArray(QJsonArray data)
     int arrayId=0;
     QJsonArray resultData=data;
     if(data.at(0).isObject())
-        {
-            //qDebug()<<data;
-            //qDebug()<<data.count();
-           //  std::sort(data.begin(), data.end(), wayToSort);
+    {
+        //qDebug()<<data;
+        //qDebug()<<data.count();
+        //  std::sort(data.begin(), data.end(), wayToSort);
 
-            //qDebug()<<data;
+        //qDebug()<<data;
 
-        }
+    }
     else if(data.at(0).isDouble())
-        {
-            //qDebug()<<data;
-            //qDebug()<<data.count();
-            // std::sort(data.begin(), data.end(),wayToSort);
-            //qDebug()<<data;
+    {
+        //qDebug()<<data;
+        //qDebug()<<data.count();
+        // std::sort(data.begin(), data.end(),wayToSort);
+        //qDebug()<<data;
 
-        }
+    }
     resultData=data;
     arrayId=0;
     foreach (const QJsonValue & value, resultData)
+    {
+        if (value.isObject())
         {
-            if (value.isObject())
-                {
-                    //qDebug() << "Object" << value.toString();
-                    resultData.removeAt(arrayId);
-                    resultData.insert(arrayId,sortObjectArraysGrabObject(value.toObject()));
-                }
-
-            arrayId++;
+            //qDebug() << "Object" << value.toString();
+            resultData.removeAt(arrayId);
+            resultData.insert(arrayId,sortObjectArraysGrabObject(value.toObject()));
         }
+
+        arrayId++;
+    }
     //qDebug()<<resultData;
     return resultData;
 }
@@ -515,108 +536,108 @@ QJsonObject QJsonContainer::sortObjectArraysGrabObject(QJsonObject data)
 {
     QJsonObject resultData=data;
     for(QJsonObject::const_iterator iter = data.begin(); iter != data.end(); ++iter)
+    {
+        if (iter.value().isArray())
         {
-            if (iter.value().isArray())
-                {
-                    //qDebug() << iter.key()  << "Array" << iter.value().toString();
-                    resultData.remove(iter.key());
-                    resultData.insert(iter.key(),sortObjectArraysGrabArray(iter.value().toArray()));
-                }
-            else if (iter.value().isObject())
-                {
-                    //qDebug() << iter.key() << "Object" << iter.value().toString();
-                    resultData.remove(iter.key());
-                    resultData.insert(iter.key(),sortObjectArraysGrabObject(iter.value().toObject()));
-
-                }
+            //qDebug() << iter.key()  << "Array" << iter.value().toString();
+            resultData.remove(iter.key());
+            resultData.insert(iter.key(),sortObjectArraysGrabArray(iter.value().toArray()));
         }
+        else if (iter.value().isObject())
+        {
+            //qDebug() << iter.key() << "Object" << iter.value().toString();
+            resultData.remove(iter.key());
+            resultData.insert(iter.key(),sortObjectArraysGrabObject(iter.value().toObject()));
+
+        }
+    }
     return resultData;
 }
 
 
-void QJsonContainer::on_sortObj_toolButton_clicked()
-{
-    viewjson_plaintext->setPlainText(sortObjectArrays(QJsonDocument::fromJson((viewjson_plaintext->toPlainText().toUtf8()))).toJson());
-    reInitModel();
-}
+//void QJsonContainer::on_sortObj_toolButton_clicked()
+//{
+//    viewjson_plaintext->setPlainText(sortObjectArrays(QJsonDocument::fromJson((viewjson_plaintext->toPlainText().toUtf8()))).toJson());
+//    reInitModel();
+//}
 
 QByteArray QJsonContainer::gUncompress(const QByteArray &data)
 {
     qDebug()<<"Uncompressing...";
-//    if (data.size() <= 4)
-//        {
-//            qWarning("gUncompress: Input data is truncated");
-//            return QByteArray();
-//        }
+    //    if (data.size() <= 4)
+    //        {
+    //            qWarning("gUncompress: Input data is truncated");
+    //            return QByteArray();
+    //        }
 
     QByteArray result;
 
-//    int ret;
-//    z_stream strm;
-//    static const int CHUNK_SIZE = 1024;
-//    char out[CHUNK_SIZE];
+    //    int ret;
+    //    z_stream strm;
+    //    static const int CHUNK_SIZE = 1024;
+    //    char out[CHUNK_SIZE];
 
-//    /* allocate inflate state */
-//    strm.zalloc = Z_NULL;
-//    strm.zfree = Z_NULL;
-//    strm.opaque = Z_NULL;
-//    strm.avail_in = data.size();
-//    strm.next_in = (Bytef*)(data.data());
+    //    /* allocate inflate state */
+    //    strm.zalloc = Z_NULL;
+    //    strm.zfree = Z_NULL;
+    //    strm.opaque = Z_NULL;
+    //    strm.avail_in = data.size();
+    //    strm.next_in = (Bytef*)(data.data());
 
-//    ret = inflateInit2(&strm, 15 +  32); // gzip decoding
-//    if (ret != Z_OK)
-//        return QByteArray();
+    //    ret = inflateInit2(&strm, 15 +  32); // gzip decoding
+    //    if (ret != Z_OK)
+    //        return QByteArray();
 
-//    // run inflate()
-//    do
-//        {
-//            strm.avail_out = CHUNK_SIZE;
-//            strm.next_out = (Bytef*)(out);
+    //    // run inflate()
+    //    do
+    //        {
+    //            strm.avail_out = CHUNK_SIZE;
+    //            strm.next_out = (Bytef*)(out);
 
-//            ret = inflate(&strm, Z_NO_FLUSH);
-//            Q_ASSERT(ret != Z_STREAM_ERROR);  // state not clobbered
+    //            ret = inflate(&strm, Z_NO_FLUSH);
+    //            Q_ASSERT(ret != Z_STREAM_ERROR);  // state not clobbered
 
-//            switch (ret)
-//                {
-//                case Z_NEED_DICT:
-//                    ret = Z_DATA_ERROR;     // and fall through
-//                case Z_DATA_ERROR:
-//                case Z_MEM_ERROR:
-//                    (void)inflateEnd(&strm);
-//                    return QByteArray();
-//                }
+    //            switch (ret)
+    //                {
+    //                case Z_NEED_DICT:
+    //                    ret = Z_DATA_ERROR;     // and fall through
+    //                case Z_DATA_ERROR:
+    //                case Z_MEM_ERROR:
+    //                    (void)inflateEnd(&strm);
+    //                    return QByteArray();
+    //                }
 
-//            result.append(out, CHUNK_SIZE - strm.avail_out);
-//        }
-//    while (strm.avail_out == 0);
+    //            result.append(out, CHUNK_SIZE - strm.avail_out);
+    //        }
+    //    while (strm.avail_out == 0);
 
-//    // clean up and return
-//    inflateEnd(&strm);
+    //    // clean up and return
+    //    inflateEnd(&strm);
     return result;
 }
 
-void QJsonContainer::getData()
-{
-    qDebug()<<"Starting get";
-    QUrl serviceUrl = QUrl(filePath_lineEdit->text());
-    loadJson("{\"status\":\"Starting Get\",\"host\":\"" + serviceUrl.url() + "\"}");
+//void QJsonContainer::getData()
+//{
+//    qDebug()<<"Starting get";
+//    QUrl serviceUrl = QUrl(filePath_lineEdit->text());
+//    loadJson("{\"status\":\"Starting Get\",\"host\":\"" + serviceUrl.url() + "\"}");
 
-    QNetworkAccessManager *networkManager = new QNetworkAccessManager(this);
-    connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(serviceGetDataRequestFinished(QNetworkReply*)));
-    QNetworkRequest request(serviceUrl);
-    if((serviceUrl.toString()).contains("https",Qt::CaseInsensitive))
-        {
-            QSslConfiguration SslConfiguration(QSslConfiguration::defaultConfiguration());
-            SslConfiguration.setProtocol(QSsl::AnyProtocol);
-            request.setSslConfiguration(SslConfiguration);
-        }
-    request.setRawHeader("Accept-Language", "en-US,en;q=0.8");
-    request.setRawHeader("Cache-Control", "no-cache");
-    request.setRawHeader("Accept-Encoding", "gzip, deflate");
-    loadJson("{\"status\":\"Sending Get\",\"host\":\"" + serviceUrl.url() + "\"}");
-    QNetworkReply *reply=networkManager->get(request);
-    Q_UNUSED(reply);
-}
+//    QNetworkAccessManager *networkManager = new QNetworkAccessManager(this);
+//    connect(networkManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(serviceGetDataRequestFinished(QNetworkReply*)));
+//    QNetworkRequest request(serviceUrl);
+//    if((serviceUrl.toString()).contains("https",Qt::CaseInsensitive))
+//        {
+//            QSslConfiguration SslConfiguration(QSslConfiguration::defaultConfiguration());
+//            SslConfiguration.setProtocol(QSsl::AnyProtocol);
+//            request.setSslConfiguration(SslConfiguration);
+//        }
+//    request.setRawHeader("Accept-Language", "en-US,en;q=0.8");
+//    request.setRawHeader("Cache-Control", "no-cache");
+//    request.setRawHeader("Accept-Encoding", "gzip, deflate");
+//    loadJson("{\"status\":\"Sending Get\",\"host\":\"" + serviceUrl.url() + "\"}");
+//    QNetworkReply *reply=networkManager->get(request);
+//    Q_UNUSED(reply);
+//}
 
 void QJsonContainer::serviceGetDataRequestFinished(QNetworkReply* reply)
 {
@@ -627,23 +648,23 @@ void QJsonContainer::serviceGetDataRequestFinished(QNetworkReply* reply)
     networkManager->deleteLater();
     reply->deleteLater();
     if(reply->error() == QNetworkReply::NoError)
+    {
+        QByteArray bytes = reply->readAll();
+        if(reply->rawHeader("Content-Encoding")==QString("gzip"))
         {
-            QByteArray bytes = reply->readAll();
-            if(reply->rawHeader("Content-Encoding")==QString("gzip"))
-                {
-                    bytes=gUncompress(bytes);
-                }
+            bytes=gUncompress(bytes);
+        }
 
-            qDebug()<<bytes;
-            loadJson(QString(bytes));
-        }
+        qDebug()<<bytes;
+        loadJson(QString(bytes));
+    }
     else
-        {
-            qDebug()<<"Error";
-            qDebug()<<reply->error();
-            qDebug()<<reply->errorString();
-            loadJson("{\"status\":\"Error\",\"host\":\"" + url + "\",\"Error Description\":\"" + reply->errorString() + "\"}");
-        }
+    {
+        qDebug()<<"Error";
+        qDebug()<<reply->error();
+        qDebug()<<reply->errorString();
+        loadJson("{\"status\":\"Error\",\"host\":\"" + url + "\",\"Error Description\":\"" + reply->errorString() + "\"}");
+    }
 }
 
 QStringList QJsonContainer::extractStringsFromModel(QJsonModel *model, const QModelIndex &parent)
@@ -654,21 +675,21 @@ QStringList QJsonContainer::extractStringsFromModel(QJsonModel *model, const QMo
     int rowCount = model->rowCount(parent);
 
     for(int i = 0; i < rowCount; ++i)
-        {
-            QModelIndex idx0 = model->index(i, 0, parent);
-            QModelIndex idx1 = model->index(i, 1, parent);
-            QModelIndex idx2 = model->index(i, 2, parent);
-            qDebug()<<idx0.data(Qt::DisplayRole).toString()<<idx1.data(Qt::DisplayRole).toString()<<idx2.data(Qt::DisplayRole).toString();
-            qDebug()<<static_cast<QJsonTreeItem*>(idx0.internalPointer())->typeName();
-            //QJsonTreeItem *item = static_cast<QJsonTreeItem*>(idx0.internalPointer());
+    {
+        QModelIndex idx0 = model->index(i, 0, parent);
+        QModelIndex idx1 = model->index(i, 1, parent);
+        QModelIndex idx2 = model->index(i, 2, parent);
+        qDebug()<<idx0.data(Qt::DisplayRole).toString()<<idx1.data(Qt::DisplayRole).toString()<<idx2.data(Qt::DisplayRole).toString();
+        qDebug()<<static_cast<QJsonTreeItem*>(idx0.internalPointer())->typeName();
+        //QJsonTreeItem *item = static_cast<QJsonTreeItem*>(idx0.internalPointer());
 
-            if(idx0.isValid())
-                {
-                    retval << idx0.data(Qt::DisplayRole).toString() +QString("|")+idx2.data(Qt::DisplayRole).toString();
-                    //qDebug()<<idx0.data(Qt::DisplayRole).toString();
-                    retval << extractStringsFromModel(model, idx0);
-                }
+        if(idx0.isValid())
+        {
+            retval << idx0.data(Qt::DisplayRole).toString() +QString("|")+idx2.data(Qt::DisplayRole).toString();
+            //qDebug()<<idx0.data(Qt::DisplayRole).toString();
+            retval << extractStringsFromModel(model, idx0);
         }
+    }
 
     return retval;
 }
@@ -687,32 +708,38 @@ QList<QModelIndex> QJsonContainer::findModelText(QJsonModel *model, const QModel
     int rowCount = model->rowCount(parent);
 
     for(int i = 0; i < rowCount; ++i)
+    {
+        QModelIndex idx0 = model->index(i, 0, parent);
+//        QModelIndex idx1 = model->index(i, 1, parent);
+        QModelIndex idx2 = model->index(i, 2, parent);
+
+        // qDebug()<<idx0.data(Qt::DisplayRole).toString()<<idx1.data(Qt::DisplayRole).toString()<<idx2.data(Qt::DisplayRole).toString();
+//        qDebug()<<static_cast<QJsonTreeItem*>(idx0.internalPointer())->typeName();
+        //QJsonTreeItem *item = static_cast<QJsonTreeItem*>(idx0.internalPointer());
+
+        if(idx0.isValid())
         {
-            QModelIndex idx0 = model->index(i, 0, parent);
-            QModelIndex idx1 = model->index(i, 1, parent);
-            QModelIndex idx2 = model->index(i, 2, parent);
-            qDebug()<<idx0.data(Qt::DisplayRole).toString()<<idx1.data(Qt::DisplayRole).toString()<<idx2.data(Qt::DisplayRole).toString();
-            qDebug()<<static_cast<QJsonTreeItem*>(idx0.internalPointer())->typeName();
-            //QJsonTreeItem *item = static_cast<QJsonTreeItem*>(idx0.internalPointer());
+            //retval << idx0.data(Qt::DisplayRole).toString() +QString("|")+idx2.data(Qt::DisplayRole).toString();
 
-            if(idx0.isValid())
-                {
-                    //retval << idx0.data(Qt::DisplayRole).toString() +QString("|")+idx2.data(Qt::DisplayRole).toString();
-                    qDebug()<<idx0.data(Qt::DisplayRole).toString();
-                    //retval << extractStringsFromModel(model, idx0);
-                    QString itemText=QString(idx0.data(Qt::DisplayRole).toString() +QString("|")+idx2.data(Qt::DisplayRole).toString());
-                    if(!findCaseSensitivity_toolbutton->isChecked())
-                    {
-                        itemText=itemText.toLower();
-                    }
-                    if(itemText.contains(stringToSearch))
-                        {
-                            retindex<<idx0;
+            //retval << extractStringsFromModel(model, idx0);
+            QString itemText=QString(idx0.data(Qt::DisplayRole).toString() +QString("|")+idx2.data(Qt::DisplayRole).toString());
 
-                        }
-                    retindex<<findModelText(model, idx0);
-                }
+            if(!findCaseSensitivity_toolbutton->isChecked())
+            {
+                itemText=itemText.toLower();
+            }
+
+            qDebug()<< "stringToSearch:" << stringToSearch;
+            qDebug()<< "itemText:" << itemText;
+
+            if(itemText.contains(stringToSearch))
+            {
+                qDebug()<< "contains";
+                retindex << idx0;
+            }
+            retindex<<findModelText(model, idx0);
         }
+    }
 
     return retindex;
 }

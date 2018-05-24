@@ -21,6 +21,7 @@ public:
     QWidget* getParseWidget() { return ui->tab_parse; }
 
     void loadJson( const QString& val ) { if( parseJson ) parseJson->loadJson(val); }
+    void keyPressEvent(QKeyEvent *evt);
 private:
     Ui::Parse_JSON *ui;
     std::unique_ptr<QJsonContainer> parseJson;

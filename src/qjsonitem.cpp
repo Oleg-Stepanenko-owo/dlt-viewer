@@ -21,9 +21,7 @@
 
 QJsonTreeItem::QJsonTreeItem(QJsonTreeItem *parent)
 {
-
     mParent = parent;
-
 }
 
 QJsonTreeItem::~QJsonTreeItem()

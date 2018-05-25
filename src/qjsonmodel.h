@@ -1,10 +1,3 @@
-/*
- * Creator Schutz Sacha
- * Modified by Yuriy Kuzin
- * Updated to support diff
- *
- */
-
 #ifndef QJSONMODEL_H
 #define QJSONMODEL_H
 

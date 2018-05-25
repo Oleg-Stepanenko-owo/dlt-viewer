@@ -32,8 +32,6 @@ QJsonModel::QJsonModel(QObject *parent) :
     mHeaders.append("Name");
     mHeaders.append("Type");
     mHeaders.append("Value");
-
-
 }
 
 QJsonModel::~QJsonModel()
@@ -78,22 +76,20 @@ bool QJsonModel::loadJson(const QByteArray &json)
         qDebug() << " QJsonParseError::NoError ";
         beginResetModel();
         delete mRootItem;
-        mRootItem = QJsonTreeItem::load(QJsonValue(QJsonDocument::fromJson((QString(
-                                                                                "{\"Error\":\"") + QString(parseError.errorString() +
-                                                                                                           "\",\"offset\":")+ QString::number(parseError.offset) +
-                                                                            "}").toUtf8()).object()));
+        mRootItem = QJsonTreeItem::load(QJsonValue(QJsonDocument::fromJson(
+                      (QString( "{\"Error\":\"") + QString(parseError.errorString() +
+                       "\",\"offset\":")+ QString::number(parseError.offset) +
+                       "}").toUtf8()).object()));
         endResetModel();
         emit dataUpdated();
         return true;
     }
     if(!mDocument.isNull())
     {
-        qDebug() << "!mDocument.isNull()";
         beginResetModel();
         delete mRootItem;
         if(mDocument.isObject())
         {
-            qDebug() << "mDocument.isObject()";
             mRootItem = QJsonTreeItem::load(QJsonValue(mDocument.object()));
         }
         else
@@ -106,7 +102,6 @@ bool QJsonModel::loadJson(const QByteArray &json)
     }
     else
     {
-        qDebug()<<"Error!! in json";
         emit dataUpdated();
         return false;
     }
@@ -114,13 +109,10 @@ bool QJsonModel::loadJson(const QByteArray &json)
     return false;
 }
 
-
 QVariant QJsonModel::data(const QModelIndex &index, int role) const
 {
-
     if (!index.isValid())
         return QVariant();
-
 
     QJsonTreeItem *item = static_cast<QJsonTreeItem*>(index.internalPointer());
 
@@ -154,7 +146,8 @@ QVariant QJsonModel::data(const QModelIndex &index, int role) const
         {
             if (item->type()==QJsonValue::Array)
             {
-                return QString("%1").arg(QString("Array") + QString("[") + QString::number(item->childCount()) + QString("]"));
+                return QString("%1").arg(QString("Array") + QString("[") +
+                                         QString::number(item->childCount()) + QString("]"));
             }
             else
             {
@@ -166,10 +159,7 @@ QVariant QJsonModel::data(const QModelIndex &index, int role) const
             return QString("%1").arg(item->value());
     }
 
-
-
     return QVariant();
-
 }
 
 QVariant QJsonModel::headerData(int section, Qt::Orientation orientation, int role) const
@@ -177,12 +167,11 @@ QVariant QJsonModel::headerData(int section, Qt::Orientation orientation, int ro
     if (role != Qt::DisplayRole)
         return QVariant();
 
-    if (orientation == Qt::Horizontal) {
-
+    if (orientation == Qt::Horizontal)
+    {
         return mHeaders.value(section);
     }
-    else
-        return QVariant();
+    else return QVariant();
 }
 
 QModelIndex QJsonModel::index(int row, int column, const QModelIndex &parent) const

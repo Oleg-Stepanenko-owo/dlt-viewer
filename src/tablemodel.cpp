@@ -257,8 +257,14 @@ TableModel::TableModel(const QString & /*data*/, QObject *parent)
                      QString _payload = msg.toStringPayload().trimmed();
                      if( *_payload.begin() == '{' && _payload.endsWith("}") )
                      {
-                         QJsonDocument doc = QJsonDocument::fromJson( msg.toStringPayload().toUtf8() );
-                         if( doc.isNull() )return QString("FALSE");
+                         QJsonParseError parseError;
+                         QJsonDocument::fromJson( msg.toStringPayload().toUtf8(), &parseError );
+
+                         if (parseError.error != QJsonParseError::NoError)
+                         {
+
+                            return QString("NOK; offset:" + QString::number(parseError.offset) );
+                         }
                          else return QString("OK");
                      }else return QString(" - ");
                  }

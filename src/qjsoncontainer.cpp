@@ -22,33 +22,15 @@
 QJsonContainer::QJsonContainer(QWidget *parent):
     QWidget(parent)
 {
-    qDebug()<<"obj_layout parent";
     obj_layout=new QVBoxLayout(parent);
     obj_layout->setContentsMargins(QMargins(5,5,5,5));
 
-
-    qDebug()<<"treeview_groupbox parent";
     treeview_groupbox=new QGroupBox(parent);
-    treeview_groupbox->setStyleSheet("QGroupBox {  border:0;}");
+    treeview_groupbox->setStyleSheet("QGroupBox {border:0;}");
 
-    qDebug()<<"treeview_layout treeview_groupbox";
     treeview_layout = new QVBoxLayout(treeview_groupbox);
 
-    qDebug()<<"treeview_layout treeview_groupbox";
     treeview = new QTreeView(treeview_groupbox);
-    viewjson_plaintext=new QPlainTextEdit(treeview_groupbox);
-    viewjson_plaintext->setVisible(false);
-
-    QPalette p = viewjson_plaintext->palette();
-    p.setColor(QPalette::Highlight, QColor(Qt::blue));
-    p.setColor(QPalette::HighlightedText, QColor(Qt::lightGray));
-    viewjson_plaintext->setPalette(p);
-
-
-
-    showjson_pushbutton=new QPushButton(treeview_groupbox);
-    showjson_pushbutton->setText(tr("Show Json Text"));
-    showjson_pushbutton->setCheckable(true);
 
     QString datastr="";
     model = new QJsonModel(parent);
@@ -56,56 +38,9 @@ QJsonContainer::QJsonContainer(QWidget *parent):
 
     treeview->setModel(model);
 
-    toolbar=new QToolBar();
-    //toolbar->setGeometry(0,21,509,458);
-    toolbar->setSizePolicy(QSizePolicy::Preferred,QSizePolicy::Preferred);
-    toolbar->setMovable(true);
-    toolbar->setFloatable(true);
-    toolbar->setAllowedAreas(Qt::AllToolBarAreas);
-
-    qDebug()<<"expandAll_Checkbox treeview_groupbox";
-    expandAll_Checkbox = new QCheckBox(toolbar);
-    expandAll_Checkbox->setText(QString(tr("Expand")));
-
-    tools_layout=new QGridLayout(toolbar);
-    tools_layout->setContentsMargins(0,0,0,0);
-    find_lineEdit=new QLineEdit();
-    find_lineEdit->setPlaceholderText(tr("Serach for..."));
-    find_lineEdit->setToolTip(tr("Enter text and press enter to search"));
-    find_lineEdit->setSizePolicy(QSizePolicy::Minimum,QSizePolicy::Minimum);
-    find_lineEdit->setFocus();
-    findNext_toolbutton=new QToolButton(toolbar);
-    findNext_toolbutton->setText(">>");
-    findNext_toolbutton->setToolTip("Find Next");
-    findPrevious_toolbutton=new QToolButton(toolbar);
-    findPrevious_toolbutton->setText("<<");
-    findPrevious_toolbutton->setToolTip("Find Previous");
-    findCaseSensitivity_toolbutton=new QToolButton(toolbar);
-    findCaseSensitivity_toolbutton->setCheckable(true);
-    findCaseSensitivity_toolbutton->setIcon(QIcon(QPixmap(":/icons/png/casesensitivity.png")));
-    findCaseSensitivity_toolbutton->setToolTip("Check to make case sensetive");
-
-    toolbar->addWidget(expandAll_Checkbox);
-    toolbar->addSeparator();
-    toolbar->addWidget(find_lineEdit);
-    toolbar->addWidget(findPrevious_toolbutton);
-    toolbar->addWidget(findNext_toolbutton);
-    toolbar->addWidget(findCaseSensitivity_toolbutton);
-    toolbar->addSeparator();
-
-    spacer = new QWidget();
-    spacer->setSizePolicy(QSizePolicy::Expanding,QSizePolicy::Preferred);
-    toolbar->addWidget(spacer);
-
-    tools_layout->addWidget(toolbar,0,0);
-
-    currentFindText=find_lineEdit->text();
     currentFindIndexId=-1;
 
-    treeview_layout->addLayout(tools_layout);
     treeview_layout->addWidget(treeview);
-    treeview_layout->addWidget(viewjson_plaintext);
-    treeview_layout->addWidget(showjson_pushbutton);
 
     treeview->resizeColumnToContents(0);
     treeview->resizeColumnToContents(1);
@@ -130,13 +65,6 @@ QJsonContainer::QJsonContainer(QWidget *parent):
     parent->setLayout(obj_layout);
 
     connect(treeview, SIGNAL(expanded(const QModelIndex& )),this, SLOT(on_treeview_item_expanded()));
-    connect(expandAll_Checkbox, SIGNAL(stateChanged(int)), this, SLOT(on_expandAll_checkbox_marked()));
-    connect(showjson_pushbutton,SIGNAL(clicked()),this,SLOT(on_showjson_pushbutton_clicked()));
-    connect(find_lineEdit,SIGNAL(returnPressed()),this,SLOT(findText()));
-    connect(find_lineEdit,SIGNAL(textChanged(QString)),this,SLOT(on_find_lineEdit_textChanged(QString)));
-    connect(findNext_toolbutton,SIGNAL(clicked()),this,SLOT(on_findNext_toolbutton_clicked()));
-    connect(findPrevious_toolbutton,SIGNAL(clicked()),this,SLOT(on_findPrevious_toolbutton_clicked()));
-    connect(findCaseSensitivity_toolbutton,SIGNAL(clicked()),this,SLOT(on_findCaseSensitivity_toolbutton_clicked()));
     connect(model,SIGNAL(dataUpdated()),this,SLOT(on_model_dataUpdated()));
 }
 
@@ -144,69 +72,8 @@ QJsonContainer::~QJsonContainer()
 {
     model->deleteLater();
     treeview->deleteLater();
-    expandAll_Checkbox->deleteLater();
     treeview_layout->deleteLater();
     treeview_groupbox->deleteLater();
-}
-
-void QJsonContainer::findText()
-{
-    if(viewjson_plaintext->isVisible())
-    {
-        if(!findCaseSensitivity_toolbutton->isChecked())
-        {
-            viewjson_plaintext->find(find_lineEdit->text());
-        }
-        else
-        {
-            viewjson_plaintext->find(find_lineEdit->text(),QTextDocument::FindCaseSensitively);
-        }
-    }
-    else
-    {
-        //works all values to stringlist
-        //QStringList strings = extractStringsFromModel(model, QModelIndex());
-        //QModelIndex idx=treeview->currentIndex();
-        //QStringList strings = extractStringsFromModel(model, idx);
-
-        //qDebug()<<"##################"<<strings;
-        findTextJsonIndexHandler(true);
-
-    }
-}
-
-void QJsonContainer::on_findNext_toolbutton_clicked()
-{
-    findText();
-}
-
-void QJsonContainer::on_findPrevious_toolbutton_clicked()
-{
-    if(viewjson_plaintext->isVisible())
-    {
-
-        if(!findCaseSensitivity_toolbutton->isChecked())
-        {
-            viewjson_plaintext->find(find_lineEdit->text(),QTextDocument::FindBackward);
-        }
-        else
-        {
-            viewjson_plaintext->find(find_lineEdit->text(),QTextDocument::FindBackward | QTextDocument::FindCaseSensitively);
-        }
-    }
-    else
-    {
-        findTextJsonIndexHandler(false);
-    }
-}
-
-void QJsonContainer::on_findCaseSensitivity_toolbutton_clicked()
-{
-    currentFindIndexesList.clear();
-    currentFindText=find_lineEdit->text();
-    qDebug() << currentFindText;
-    currentFindIndexesList=findModelText(model, QModelIndex());
-    currentFindIndexId=-1;
 }
 
 /* Move trough json items that contain text
@@ -214,20 +81,9 @@ void QJsonContainer::on_findCaseSensitivity_toolbutton_clicked()
  * input bool value:
  *      true - forward;
  *      false - backward;
- *
- *  TODO: make search cursor moving start from selection
  */
 void QJsonContainer::findTextJsonIndexHandler(bool direction)
 {
-
-    if(currentFindText.isEmpty() || currentFindText!=find_lineEdit->text())
-    {
-        currentFindIndexesList.clear();
-        currentFindText=find_lineEdit->text();
-        currentFindIndexesList=findModelText(model, QModelIndex());
-        currentFindIndexId=-1;
-    }
-
     if(currentFindIndexesList.count()>0 && currentFindIndexId<currentFindIndexesList.count()-1 && direction)
     {
         currentFindIndexId++;
@@ -248,54 +104,31 @@ void QJsonContainer::findTextJsonIndexHandler(bool direction)
         currentFindIndexId=currentFindIndexesList.count()-1;
     }
 
-    if(currentFindIndexesList.count()==0)
-    {
-        QRect widgetRect = find_lineEdit->contentsRect();
-        QToolTip::showText( find_lineEdit->mapToGlobal( QPoint(widgetRect.center().x(),widgetRect.center().y()) ), tr("<b><font \"color\"=red>Text Not Found!</font></b>"),0,QRect(100, 200, 11, 16),3000 );
-    }
     if(currentFindIndexId>=0)
     {
         treeview->setCurrentIndex(currentFindIndexesList[currentFindIndexId]);
     }
 }
 
-void QJsonContainer::on_showjson_pushbutton_clicked()
-{
-    if(viewjson_plaintext->isVisible())
-    {
-        viewjson_plaintext->setVisible(false);
-        treeview->setVisible(true);
-        loadJson(viewjson_plaintext->toPlainText());
-        showjson_pushbutton->setText(tr("Show Json Text"));
-    }
-    else
-    {
-        viewjson_plaintext->setVisible(true);
-        treeview->setVisible(false);
-        showjson_pushbutton->setText(tr("Show Json View"));
-    }
-}
-
 void QJsonContainer::loadJson(QJsonDocument data)
 {
-    QString datastr=data.toJson();
-    viewjson_plaintext->setPlainText((QJsonDocument::fromJson(datastr.toUtf8())).toJson(QJsonDocument::Indented));
-    model->loadJson(datastr.toUtf8());
-    on_expandAll_checkbox_marked();
+    plainJSONText = data.toJson();
+    model->loadJson(plainJSONText.toUtf8());
+    expandAll();
     //treeview->setColumnWidth(2,300);
 }
 
 void QJsonContainer::loadJson(QString data)
 {
-    viewjson_plaintext->setPlainText((QJsonDocument::fromJson(data.toUtf8())).toJson(QJsonDocument::Indented));
+    plainJSONText = data;
     model->loadJson(data.toUtf8());
-    on_expandAll_checkbox_marked();
+    expandAll();
     //treeview->setColumnWidth(2,300);
 }
 
-void QJsonContainer::on_expandAll_checkbox_marked()
+void QJsonContainer::expandAll( )
 {
-    if (expandAll_Checkbox->isChecked())
+    if ( isExpandAll )
     {
         treeview->expandAll();
         treeview->resizeColumnToContents(0);
@@ -312,7 +145,7 @@ void QJsonContainer::on_expandAll_checkbox_marked()
 void QJsonContainer::on_treeview_item_expanded()
 {
     //qDebug()<<"expanded";
-    if(!expandAll_Checkbox->isChecked())
+    if( !isExpandAll )
     {
         QTreeView *treeviewcall = (QTreeView *)sender();
         treeviewcall->resizeColumnToContents(0);
@@ -325,18 +158,16 @@ void QJsonContainer::on_treeview_item_expanded()
 QStringList QJsonContainer::extractStringsFromModel(QJsonModel *model, const QModelIndex &parent)
 {
     QStringList retval;
-
-
     int rowCount = model->rowCount(parent);
 
     for(int i = 0; i < rowCount; ++i)
     {
         QModelIndex idx0 = model->index(i, 0, parent);
-        QModelIndex idx1 = model->index(i, 1, parent);
+        //        QModelIndex idx1 = model->index(i, 1, parent);
         QModelIndex idx2 = model->index(i, 2, parent);
-        qDebug()<<idx0.data(Qt::DisplayRole).toString()<<idx1.data(Qt::DisplayRole).toString()<<idx2.data(Qt::DisplayRole).toString();
-        qDebug()<<static_cast<QJsonTreeItem*>(idx0.internalPointer())->typeName();
-        //QJsonTreeItem *item = static_cast<QJsonTreeItem*>(idx0.internalPointer());
+        //        qDebug()<<idx0.data(Qt::DisplayRole).toString()<<idx1.data(Qt::DisplayRole).toString()<<idx2.data(Qt::DisplayRole).toString();
+        //        qDebug()<<static_cast<QJsonTreeItem*>(idx0.internalPointer())->typeName();
+        //        QJsonTreeItem *item = static_cast<QJsonTreeItem*>(idx0.internalPointer());
 
         if(idx0.isValid())
         {
@@ -353,8 +184,8 @@ QList<QModelIndex> QJsonContainer::findModelText(QJsonModel *model, const QModel
 {
     QList<QModelIndex> retindex;
 
-    QString stringToSearch=find_lineEdit->text();
-    if(!findCaseSensitivity_toolbutton->isChecked())
+    QString stringToSearch = currentFindText;
+    if( !mCaseSensitivity )
     {
         stringToSearch=stringToSearch.toLower();
     }
@@ -368,9 +199,10 @@ QList<QModelIndex> QJsonContainer::findModelText(QJsonModel *model, const QModel
 
         if(idx0.isValid())
         {
-            QString itemText=QString(idx0.data(Qt::DisplayRole).toString() +QString("|")+idx2.data(Qt::DisplayRole).toString());
+            QString itemText = QString(idx0.data(Qt::DisplayRole).toString() +
+                                     QString("|")+idx2.data(Qt::DisplayRole).toString());
 
-            if(!findCaseSensitivity_toolbutton->isChecked())
+            if( !mCaseSensitivity)
             {
                 itemText=itemText.toLower();
             }
@@ -386,12 +218,6 @@ QList<QModelIndex> QJsonContainer::findModelText(QJsonModel *model, const QModel
     return retindex;
 }
 
-void QJsonContainer::on_find_lineEdit_textChanged(QString /*text*/)
-{
-    resetCurrentFind();
-
-}
-
 void QJsonContainer::resetCurrentFind()
 {
     currentFindIndexesList.clear();
@@ -402,4 +228,18 @@ void QJsonContainer::resetCurrentFind()
 void QJsonContainer::on_model_dataUpdated()
 {
     resetCurrentFind();
+}
+
+void QJsonContainer::search( const QString& text, bool caseSensitivity, bool direction )
+{
+    mCaseSensitivity = caseSensitivity;
+
+    if(currentFindText.isEmpty() || currentFindText != text )
+    {
+        currentFindIndexesList.clear();
+        currentFindText = text;
+        currentFindIndexesList = findModelText(model, QModelIndex());
+        currentFindIndexId=-1;
+    }
+    findTextJsonIndexHandler( direction );
 }

@@ -45,6 +45,7 @@
         <file>png/stylesheet-branch-more.png</file>
         <file>png/stylesheet-branch-open.png</file>
         <file>png/stylesheet-vline.png</file>
+        <file>png/expand_all.png</file>
     </qresource>
     <qresource prefix="/">
         <file>qss/qjsontreeview.qss</file>

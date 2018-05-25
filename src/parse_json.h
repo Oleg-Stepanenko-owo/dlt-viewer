@@ -20,8 +20,22 @@ public:
 
     QWidget* getParseWidget() { return ui->tab_parse; }
 
-    void loadJson( const QString& val ) { if( parseJson ) parseJson->loadJson(val); }
+    void loadJson( const QString& val );
     void keyPressEvent(QKeyEvent *evt);
+private slots:
+
+    void on_leSearch_textChanged(const QString &arg1);
+    void on_leSearch_returnPressed();
+
+    void on_pbSearchNext_clicked();
+
+    void on_pbSearchPrev_clicked();
+
+    void on_tbCaseSens_clicked();
+
+
+    void on_tbExpandAll_clicked();
+
 private:
     Ui::Parse_JSON *ui;
     std::unique_ptr<QJsonContainer> parseJson;

@@ -37,8 +37,6 @@ SearchTableModel::~SearchTableModel()
 
 }
 
-
-
 QVariant SearchTableModel::data(const QModelIndex &index, int role) const
 {
     QDltMsg msg;
@@ -274,7 +272,7 @@ void SearchTableModel::modelChanged()
 
 int SearchTableModel::columnCount(const QModelIndex & /*parent*/) const
 {
-    return DLT_VIEWER_SEARCHCOLUMN_COUNT+project->settings->showArguments;
+    return DLT_VIEWER_SEARCHCOLUMN_COUNT + (project->settings->checkJSON ? 0 : project->settings->showArguments);
 }
 
 void SearchTableModel::clear_SearchResults()

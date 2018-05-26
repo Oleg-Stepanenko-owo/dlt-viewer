@@ -20,7 +20,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Dialog</string>
+   <string>JSON Parse</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="1" column="0">

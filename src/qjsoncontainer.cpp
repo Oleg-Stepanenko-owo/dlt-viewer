@@ -18,6 +18,7 @@
 **********************************************/
 
 #include "qjsoncontainer.h"
+constexpr int FIRST_COL_W = 100;
 
 QJsonContainer::QJsonContainer(QWidget *parent):
     QWidget(parent)
@@ -42,10 +43,10 @@ QJsonContainer::QJsonContainer(QWidget *parent):
 
     treeview_layout->addWidget(treeview);
 
-    treeview->resizeColumnToContents(0);
-    treeview->resizeColumnToContents(1);
-    treeview->resizeColumnToContents(2);
-    //treeview->setColumnWidth(2,300);
+    treeview->setColumnWidth(0,FIRST_COL_W);
+    treeview->setColumnWidth(1,60);
+    treeview->setColumnWidth(2,100);
+
     treeview->autoScrollMargin();
     treeview->setAlternatingRowColors(true);
     treeview->setAnimated(true);
@@ -115,7 +116,6 @@ void QJsonContainer::loadJson(QJsonDocument data)
     plainJSONText = data.toJson();
     model->loadJson(plainJSONText.toUtf8());
     expandAll();
-    //treeview->setColumnWidth(2,300);
 }
 
 void QJsonContainer::loadJson(QString data)
@@ -123,7 +123,6 @@ void QJsonContainer::loadJson(QString data)
     plainJSONText = data;
     model->loadJson(data.toUtf8());
     expandAll();
-    //treeview->setColumnWidth(2,300);
 }
 
 void QJsonContainer::expandAll( )
@@ -132,26 +131,20 @@ void QJsonContainer::expandAll( )
     {
         treeview->expandAll();
         treeview->resizeColumnToContents(0);
-        treeview->resizeColumnToContents(1);
-        treeview->resizeColumnToContents(2);
-        //treeview->setColumnWidth(2,300);
     }
     else
     {
         treeview->collapseAll();
+        treeview->setColumnWidth(0,FIRST_COL_W);
     }
 }
 
 void QJsonContainer::on_treeview_item_expanded()
 {
-    //qDebug()<<"expanded";
     if( !isExpandAll )
     {
         QTreeView *treeviewcall = (QTreeView *)sender();
         treeviewcall->resizeColumnToContents(0);
-        treeviewcall->resizeColumnToContents(1);
-        treeviewcall->resizeColumnToContents(2);
-        //treeviewcall->setColumnWidth(2,300);
     }
 }
 

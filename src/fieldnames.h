@@ -14,7 +14,7 @@ public:
     /* Order of columns */
     enum Fields
     {
-        Index,
+        Index = 0,
         Time,
         TimeStamp,
         Counter,

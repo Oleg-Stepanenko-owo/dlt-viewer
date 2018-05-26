@@ -85,7 +85,8 @@ MainWindow::MainWindow(QWidget *parent) :
     timer(this),
     qcontrol(this),
     pulseButtonColor(255, 40, 40),
-    isSearchOngoing(false)
+    isSearchOngoing(false),
+    tableColSize()
 {
     ui->setupUi(this);
     ui->enableConfigFrame->setVisible(false);
@@ -293,19 +294,10 @@ void MainWindow::initView()
     //ui->tableView->setItemDelegate(delegate);
     //ui->tableView->setItemDelegateForColumn(FieldNames::Payload,delegate);
 
-    ui->tableView->setColumnWidth(0,35);
-    ui->tableView->setColumnWidth(1,110);
-    ui->tableView->setColumnWidth(2,50);
-    ui->tableView->setColumnWidth(3,40);
-    ui->tableView->setColumnWidth(4,40);
-    ui->tableView->setColumnWidth(5,45);
-    ui->tableView->setColumnWidth(6,45);
-    ui->tableView->setColumnWidth(7,45);
-    ui->tableView->setColumnWidth(8,45);
-    ui->tableView->setColumnWidth(9,45);
-    ui->tableView->setColumnWidth(10,35);
-    ui->tableView->setColumnWidth(11,35);
-    ui->tableView->setColumnWidth(12,400); // 12 is the index of the paayload column !
+    getTableColSize();
+    for( const auto& size_col : tableColSize ){
+        ui->tableView->setColumnWidth(size_col.first, size_col.second );
+    }
 
     // Payload column expands as needed
     // horizontal scrolling
@@ -648,10 +640,32 @@ void MainWindow::initFileHandling()
 
 }
 
+void MainWindow::getTableColSize()
+{
+    DltSettingsManager *settings = DltSettingsManager::getInstance();
+    tableColSize.clear();
+
+    for( int a = 0; a <= FieldNames::Fields::Payload; ++a  )
+    {
+        QString fieldName = QString("columnsize/") +
+                FieldNames::getName( static_cast<FieldNames::Fields>(a) );
+        tableColSize[a] = settings->value( fieldName,  a == 1 ? 110 : a == 12 ? 400 : 40 ).toInt();
+    }
+}
+
+void MainWindow::storeTableColSize()
+{
+    DltSettingsManager *settings = DltSettingsManager::getInstance();
+    for( const auto& a: tableColSize ) {
+        QString fieldName = QString("columnsize/") +
+                FieldNames::getName( static_cast<FieldNames::Fields>(a.first) );
+        if( ui->tableView->columnWidth( a.first ) )
+        settings->setValue( fieldName, ui->tableView->columnWidth( a.first ) );
+    }
+}
 
 void MainWindow::commandLineConvertToDLT()
 {
-
     qfile.enableFilter(true);
     openDltFile(QStringList(OptManager::getInstance()->getConvertSourceFile()));
     outputfileIsFromCLI = false;
@@ -670,7 +684,6 @@ void MainWindow::commandLineConvertToDLT()
 
 void MainWindow::commandLineConvertToASCII()
 {
-
     qfile.enableFilter(true);
     openDltFile(QStringList(OptManager::getInstance()->getConvertSourceFile()));
     outputfileIsFromCLI = false;
@@ -687,7 +700,6 @@ void MainWindow::commandLineConvertToASCII()
 
 void MainWindow::commandLineConvertToCSV()
 {
-
     qfile.enableFilter(true);
     openDltFile(QStringList(OptManager::getInstance()->getConvertSourceFile()));
     outputfileIsFromCLI = false;
@@ -753,7 +765,6 @@ void MainWindow::ErrorMessage(QMessageBox::Icon level, QString title, QString me
         else
             QMessageBox::critical(this, "ErrorMessage problem", "unhandled case");
     }
-
 }
 
 void MainWindow::commandLineExecutePlugin(QString name, QString cmd, QStringList params)
@@ -764,7 +775,6 @@ void MainWindow::commandLineExecutePlugin(QString name, QString cmd, QStringList
     {
         qDebug() << "Plugin not found " << plugin;
         return;
-
     }
 
     /* Check that this is a command plugin */
@@ -788,7 +798,6 @@ void MainWindow::commandLineExecutePlugin(QString name, QString cmd, QStringList
     {
         exit(0);
     }
-
 }
 
 void MainWindow::deleteactualFile()
@@ -815,10 +824,9 @@ void MainWindow::deleteactualFile()
     }
 }
 
-
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-
+    storeTableColSize();
     settings->writeSettings(this);
     if(true == isSearchOngoing)
     {
@@ -5940,9 +5948,9 @@ void MainWindow::on_tableView_customContextMenuRequested(QPoint pos)
     QPoint globalPos = ui->tableView->mapToGlobal(pos);
     QMenu menu(ui->tableView);
     QAction *action;
-    QModelIndexList list = ui->tableView->selectionModel()->selection().indexes();
+//    QModelIndexList list = ui->tableView->selectionModel()->selection().indexes();
 
-    action = new QAction("&to Clipboard All Fields", this);
+    action = new QAction("&to Clipboard", this);
     connect(action, SIGNAL(triggered()), this, SLOT(on_action_menuConfig_Copy_to_clipboard_triggered()));
     menu.addAction(action);
 
@@ -5950,7 +5958,7 @@ void MainWindow::on_tableView_customContextMenuRequested(QPoint pos)
     connect(action, SIGNAL(triggered()), this, SLOT(on_action_menuConfig_customCopy_to_clipboard_triggered()));
     menu.addAction(action);
 
-    action = new QAction("parce JSON from current row", this);
+    action = new QAction("parce JSON from select rows", this);
     connect(action, SIGNAL(triggered()), this, SLOT(on_actionaction_JSON_parse_triggered()));
     menu.addAction(action);
 

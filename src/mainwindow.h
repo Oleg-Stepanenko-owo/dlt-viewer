@@ -28,6 +28,7 @@
 #include <QColor>
 #include <QComboBox>
 #include <QProgressBar>
+#include <map>
 
 #include "tablemodel.h"
 #include "project.h"
@@ -224,6 +225,7 @@ private:
     QString target_version_string;
 
     Parse_JSON *parseJSONDlg;
+    std::map< int, int >tableColSize;
 
     /* functions called in constructor */
     void initState();
@@ -231,6 +233,8 @@ private:
     void initSignalConnections();
     void initFileHandling();
     void initSearchTable();
+    void storeTableColSize();
+    void getTableColSize();
 
     /* general functions */
 

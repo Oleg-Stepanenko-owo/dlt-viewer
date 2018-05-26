@@ -28,11 +28,13 @@
 #include <QColor>
 #include <QComboBox>
 #include <QProgressBar>
+#include <map>
 
 #include "tablemodel.h"
 #include "project.h"
 #include "settingsdialog.h"
 #include "searchdialog.h"
+#include "parse_json.h"
 #include "optmanager.h"
 #include "qdlt.h"
 #include "dltsettingsmanager.h"
@@ -222,12 +224,17 @@ private:
     /* keep the target version string submited by the target for internal use */
     QString target_version_string;
 
+    Parse_JSON *parseJSONDlg;
+    std::map< int, int >tableColSize;
+
     /* functions called in constructor */
     void initState();
     void initView();
     void initSignalConnections();
     void initFileHandling();
     void initSearchTable();
+    void storeTableColSize();
+    void getTableColSize();
 
     /* general functions */
 
@@ -243,7 +250,7 @@ private:
 
     void reloadLogFileDefaultFilter();
 
-    void exportSelection(bool ascii,bool file);
+    void exportSelection(bool ascii, bool file, bool custom);
     void exportSelection_searchTable();
 
     void ControlServiceRequest(EcuItem* ecuitem, int service_id );
@@ -514,6 +521,13 @@ private slots:
     void on_actionToggle_FiltersEnabled_triggered(bool checked);
     void on_actionToggle_SortByTimeEnabled_triggered(bool checked);
 
+    void on_actionStoreRegExp_triggered();
+
+    void on_tableView_doubleClicked(const QModelIndex &index);
+
+    void on_action_menuConfig_customCopy_to_clipboard_triggered();
+
+    void on_actionaction_JSON_parse_triggered();
 
 public slots:
 

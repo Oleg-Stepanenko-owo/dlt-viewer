@@ -28,6 +28,7 @@
         <file>png/document-open-recent-2_gray.png</file>
         <file>png/network-transmit-receive_connected.png</file>
         <file>png/network-transmit-receive_disconnected.png</file>
+        <file>png/store.png</file>
     </qresource>
     <qresource prefix="/icons">
         <file>png/face-glasses.png</file>
@@ -37,5 +38,16 @@
         <file>png/dialog-error-3.png</file>
         <file>png/dialog-error-3_g.png</file>
         <file>png/view-filter_32_on_g.png</file>
+        <file>png/casesensitivity.png</file>
+        <file>png/diff.png</file>
+        <file>png/stylesheet-branch-closed.png</file>
+        <file>png/stylesheet-branch-end.png</file>
+        <file>png/stylesheet-branch-more.png</file>
+        <file>png/stylesheet-branch-open.png</file>
+        <file>png/stylesheet-vline.png</file>
+        <file>png/expand_all.png</file>
+    </qresource>
+    <qresource prefix="/">
+        <file>qss/qjsontreeview.qss</file>
     </qresource>
 </RCC>

@@ -37,8 +37,6 @@ SearchTableModel::~SearchTableModel()
 
 }
 
-
-
 QVariant SearchTableModel::data(const QModelIndex &index, int role) const
 {
     QDltMsg msg;
@@ -187,7 +185,7 @@ QVariant SearchTableModel::data(const QModelIndex &index, int role) const
 
     if ( role == Qt::BackgroundRole ) {
         //always black
-        return QVariant(QBrush(QColor(255,255,255)));
+        return index.row() % 2 ? QVariant(QBrush(QColor(255,255,255))) : QVariant(QBrush(QColor(240,240,240))) ;
     }
 
 
@@ -274,7 +272,7 @@ void SearchTableModel::modelChanged()
 
 int SearchTableModel::columnCount(const QModelIndex & /*parent*/) const
 {
-    return DLT_VIEWER_SEARCHCOLUMN_COUNT+project->settings->showArguments;
+    return DLT_VIEWER_SEARCHCOLUMN_COUNT + (project->settings->checkJSON ? 0 : project->settings->showArguments);
 }
 
 void SearchTableModel::clear_SearchResults()

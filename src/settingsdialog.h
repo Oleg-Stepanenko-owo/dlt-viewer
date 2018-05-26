@@ -95,8 +95,11 @@ public:
     int automaticTimezoneFromDlt;
     qlonglong utcOffset;
     int dst;
+    int rowSize;
+    int checkJSON;
 
     QString workingDirectory;
+    QFont my_font;
 
     void assertSettingsVersion();
 
@@ -113,9 +116,13 @@ public:
     QStringList getRecentFilters();
     QString getWorkingDirectory();
 
+    QString storedSearchStr;
+
     // this function checks if old cache files should be deleted
     // This function should be called during initialisation of dlt viewer
     void clearIndexCacheAfterDays();
+
+    void addSearchStr( const std::string& str );
 
 Q_SIGNALS:
     void FilterPathChanged();
@@ -147,6 +154,8 @@ private slots:
     void on_spinBox_showArguments_valueChanged(int i);
 
     void on_checkBoxPluginsAutoload_stateChanged(int arg1);
+
+    void on_jsonCheck_clicked(bool checked);
 };
 
 #endif // SETTINGSDIALOG_H

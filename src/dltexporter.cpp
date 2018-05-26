@@ -2,6 +2,7 @@
 #include <QMessageBox>
 #include <QApplication>
 #include <QClipboard>
+#include <QString>
 
 #include "dltexporter.h"
 #include "fieldnames.h"
@@ -18,6 +19,7 @@ DltExporter::DltExporter(QObject *parent) :
     selection = NULL;
     exportFormat = FormatDlt;
     exportSelection = SelectionAll;
+    m_settings = NULL;
 }
 
 QString DltExporter::escapeCSVValue(QString arg)
@@ -197,6 +199,57 @@ bool DltExporter::getMsg(int num,QDltMsg &msg,QByteArray &buf)
     return msg.setMsg(buf);
 }
 
+void DltExporter::setSettings( const SettingsDialog* setting )
+{
+  m_settings = setting;
+}
+
+const QString DltExporter::extract_payload( QDltFile *from, QModelIndexList *selection )
+{
+    QDltMsg msg;
+    QByteArray buf;
+
+    this->from = from;
+    exportSelection = DltExporter::SelectionSelected;
+    exportFormat = DltExporter::FormatUTF8;
+    this->selection = selection;
+
+    /* Sort the selection list and create Row list */
+    if(exportSelection == DltExporter::SelectionSelected && selection != NULL)
+    {
+        qSort(selection->begin(), selection->end());
+        selectedRows.clear();
+        for(int num=0;num<selection->count();num++)
+        {
+            QModelIndex index = selection->at(num);
+            if(index.column() == 0)
+                selectedRows.append(index.row());
+        }
+    }
+
+    QString return_val;
+    for( int num = 0; num < selectedRows.size(); ++num )
+    {
+        if(!getMsg(num,msg,buf))
+        {
+            return QString("{ \"ERROR\":\"DLT Export getMsg() failed on msg\" }");
+        }
+        else
+        {
+            return_val += msg.toStringPayload().toUtf8().simplified();
+        }
+    }
+
+    return_val.replace("\"{\"", "{\"");
+    return_val.replace("}\" }", "} }");
+
+    QClipboard *clipboard = QApplication::clipboard();
+    clipboard->setText(return_val);
+
+
+    return return_val;
+}
+
 bool DltExporter::exportMsg(int num, QDltMsg &msg, QByteArray &buf)
 {
     if((exportFormat == DltExporter::FormatDlt)||(exportFormat == DltExporter::FormatDltDecoded))
@@ -209,14 +262,14 @@ bool DltExporter::exportMsg(int num, QDltMsg &msg, QByteArray &buf)
 
         /* get message ASCII text */
         if(exportSelection == DltExporter::SelectionAll)
-            text += QString("%1 ").arg(num);
+            text += QString("%1").arg(num);
         else if(exportSelection == DltExporter::SelectionFiltered)
-            text += QString("%1 ").arg(from->getMsgFilterPos(num));
+            text += QString("%1").arg(from->getMsgFilterPos(num));
         else if(exportSelection == DltExporter::SelectionSelected)
-            text += QString("%1 ").arg(from->getMsgFilterPos(selectedRows[num]));
+            text += QString("%1").arg(from->getMsgFilterPos(selectedRows[num]));
         else
             return false;
-        text += msg.toStringHeader();
+        text += msg.toStringHeader( m_settings );
         text += " ";
         text += msg.toStringPayload().simplified();
         text += "\n";

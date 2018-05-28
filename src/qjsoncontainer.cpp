@@ -18,6 +18,8 @@
 **********************************************/
 
 #include "qjsoncontainer.h"
+#include <QMessageBox>
+
 constexpr int FIRST_COL_W = 100;
 
 QJsonContainer::QJsonContainer(QWidget *parent):
@@ -175,12 +177,15 @@ QStringList QJsonContainer::extractStringsFromModel(QJsonModel *model, const QMo
 
 QList<QModelIndex> QJsonContainer::findModelText(QJsonModel *model, const QModelIndex &parent)
 {
-    QList<QModelIndex> retindex;
+    QRegExp regExp;
+    regExp.setPattern( currentFindText );
+    regExp.setCaseSensitivity( isCaseSensitivity ? Qt::CaseSensitive : Qt::CaseInsensitive );
 
-    QString stringToSearch = currentFindText;
-    if( !mCaseSensitivity )
+    QList<QModelIndex> retindex;
+    QString searchSTR = currentFindText;
+    if( !isCaseSensitivity )
     {
-        stringToSearch=stringToSearch.toLower();
+        searchSTR=searchSTR.toLower();
     }
 
     int rowCount = model->rowCount(parent);
@@ -195,16 +200,26 @@ QList<QModelIndex> QJsonContainer::findModelText(QJsonModel *model, const QModel
             QString itemText = QString(idx0.data(Qt::DisplayRole).toString() +
                                      QString("|")+idx2.data(Qt::DisplayRole).toString());
 
-            if( !mCaseSensitivity)
+            if( !isCaseSensitivity)
             {
                 itemText=itemText.toLower();
             }
 
-            if(itemText.contains(stringToSearch))
-            {
+            if( isRegExp ){
+                if (!regExp.isValid())
+                {
+                    QMessageBox::warning(0, QString("Search"),
+                                         QString("Invalid regular expression!"));
+                    return retindex;
+                } else if (itemText.contains(regExp)) {
+                    retindex << idx0;
+                }
+
+            } else if(itemText.contains(searchSTR)){
                 retindex << idx0;
             }
-            retindex<<findModelText(model, idx0);
+
+            retindex << findModelText(model, idx0);
         }
     }
 
@@ -225,7 +240,7 @@ void QJsonContainer::on_model_dataUpdated()
 
 void QJsonContainer::search( const QString& text, bool caseSensitivity, bool direction )
 {
-    mCaseSensitivity = caseSensitivity;
+    isCaseSensitivity = caseSensitivity;
 
     if(currentFindText.isEmpty() || currentFindText != text )
     {

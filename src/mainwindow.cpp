@@ -365,8 +365,9 @@ void MainWindow::initView()
     searchComboBox->setLineEdit(searchTextbox);
     searchComboBox->setInsertPolicy(QComboBox::InsertAtTop);
 
-    if( !settings->storedSearchStr.isEmpty() )
-        searchComboBox->addItem(settings->storedSearchStr);
+    for( const auto& val: settings->storedSearchStr )
+        searchComboBox->addItem( val );
+
 
     /* Initialize toolbars. Most of the construction and connection is done via the
      * UI file. See mainwindow.ui, ActionEditor and Signal & Slots editor */
@@ -410,6 +411,8 @@ void MainWindow::initSignalConnections()
     /* Insert search text box to search toolbar, before previous button */
     QAction *before = m_searchActions.at(ToolbarPosition::FindPrevious);
     ui->searchToolbar->insertWidget(before, searchComboBox);
+    searchComboBox->setContextMenuPolicy( Qt::CustomContextMenu );
+    connect(searchComboBox, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(list_context_menu(QPoint)));
 
     /* adding shortcuts - regard: in the search window, the signal is caught by another way, this here only catches the keys when main window is active */
     m_shortcut_searchnext = new QShortcut(QKeySequence("F3"), this);
@@ -484,8 +487,6 @@ void MainWindow::initSearchTable()
     m_searchresultsTable->setColumnWidth(FieldNames::Mode,40);
     m_searchresultsTable->setColumnWidth(FieldNames::ArgCount,40);
     m_searchresultsTable->setColumnWidth(FieldNames::Payload,1000);
-
-
 }
 
 void MainWindow::initFileHandling()
@@ -6767,7 +6768,12 @@ void MainWindow::onSearchProgressChanged(bool isInProgress)
 
 void MainWindow::on_actionStoreRegExp_triggered()
 {
-    settings->addSearchStr( searchDlg->getText().toStdString() );
+    if( settings->addSearchStr( searchDlg->getText() ) ) {
+        for( const auto& val: settings->storedSearchStr )
+            if( -1 == searchComboBox->findText( val ) ) {
+                searchComboBox->addItem(val);
+            }
+    }
 }
 
 void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
@@ -6802,4 +6808,42 @@ void MainWindow::on_actionaction_JSON_parse_triggered()
 
     parseJSONDlg->loadJson( exporter.extract_payload( &qfile, &list ) ) ;
     parseJSONDlg->open();
+}
+
+void MainWindow::list_context_menu(QPoint pos)
+{
+    QAbstractItemView* view = searchComboBox->view();
+    QModelIndex index = view->indexAt(pos);
+    if (!index.isValid()) { return; }
+    QMenu menu;
+    QAction* action = new QAction(QString("Remove: %1").arg(searchTextbox->text()), this );
+    connect(action, SIGNAL(triggered()), SLOT(on_action_removeStoredStr( )));
+
+    menu.addAction(action);
+    menu.exec(view->mapToGlobal(pos));
+}
+
+void MainWindow::on_action_removeStoredStr(  )
+{
+    QString val = searchTextbox->text();
+    DltSettingsManager *settingsFile = DltSettingsManager::getInstance();
+
+    int a = 0;
+    for( ; a < static_cast<int>(settings->storedSearchStr.size()); ++a )
+        settingsFile->setValue( SEARCH_STR + QString(a), "" );
+
+    settings->storedSearchStr.erase( settings->storedSearchStr.find( val ) );
+
+    a = 0;
+    for( const auto& it : settings->storedSearchStr )
+    {
+        QString strField( SEARCH_STR + QString(a++) );
+        settingsFile->setValue( strField, it );
+    }
+    settingsFile->setValue( SEARCH_STR_COUNT, static_cast<int>(settings->storedSearchStr.size()) );
+
+    searchComboBox->clear();
+    for( const auto& val: settings->storedSearchStr )
+        searchComboBox->addItem( val );
+    searchTextbox->setText( searchComboBox->itemText(0) );
 }

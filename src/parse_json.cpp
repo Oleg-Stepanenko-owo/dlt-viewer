@@ -93,3 +93,8 @@ void Parse_JSON::on_tbExpandAll_clicked()
 {
     parseJson->setExpandAll( ui->tbExpandAll->isChecked() );
 }
+
+void Parse_JSON::on_tbRegExp_clicked(bool checked)
+{
+    parseJson->setRegExp( checked );
+}

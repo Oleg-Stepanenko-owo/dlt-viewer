@@ -605,11 +605,12 @@ void SettingsDialog::readSettings()
     updateContextLoadingFile = settings->value("startup/updateContextLoadingFile",1).toInt();
     updateContextsUnregister = settings->value("startup/updateContextsUnregister",0).toInt();
 
-    storedSearchStr = settings->value("search/str").toString();
+    storedSearchStr.clear();
+    for( int a = 0; a < settings->value(SEARCH_STR_COUNT,0).toInt(); ++a )
+        storedSearchStr.insert( settings->value(SEARCH_STR + QString(a)).toString() );
+
     checkJSON = settings->value("startup/checkJSON").toInt();
 }
-
-
 
 QStringList SettingsDialog::getRecentFiles(){
     return DltSettingsManager::getInstance()->value("other/recentFileList").toStringList();
@@ -869,11 +870,20 @@ void SettingsDialog::on_checkBoxPluginsAutoload_stateChanged(int activated)
     }
 }
 
+bool SettingsDialog::addSearchStr( const QString& str )
+{ 
+    auto returnVal = storedSearchStr.insert( str );
 
-void SettingsDialog::addSearchStr( const std::string& str )
-{
-     DltSettingsManager *settings = DltSettingsManager::getInstance();
-     settings->setValue( "search/str", str.c_str() );
+    if( returnVal.second ) {
+        int a = 0;
+        for( const auto& it : storedSearchStr )
+        {
+            QString strField( SEARCH_STR + QString(a++) );
+            DltSettingsManager::getInstance()->setValue( strField, it );
+        }
+         DltSettingsManager::getInstance()->setValue( SEARCH_STR_COUNT, static_cast<int>(storedSearchStr.size()) );
+    }
+    return returnVal.second;
 }
 
 void SettingsDialog::on_jsonCheck_clicked(bool checked)

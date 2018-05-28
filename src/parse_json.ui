@@ -114,7 +114,7 @@
       <enum>QLayout::SetFixedSize</enum>
      </property>
      <item>
-      <widget class="QToolButton" name="toolButton">
+      <widget class="QToolButton" name="tbRegExp">
        <property name="minimumSize">
         <size>
          <width>40</width>

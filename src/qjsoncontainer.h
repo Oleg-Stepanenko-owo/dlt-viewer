@@ -25,10 +25,12 @@ public:
     void resetCurrentFind();
     void expandAll( );
     void setExpandAll( bool val ){ if( isExpandAll != val ){ isExpandAll=val; expandAll(); } }
+    void setRegExp( bool val ){ isRegExp = val; }
 
 private:
-    bool mCaseSensitivity{false};
+    bool isCaseSensitivity{false};
     bool isExpandAll{false};
+    bool isRegExp{false};
     QJsonModel *model;
     QTreeView *treeview;
 

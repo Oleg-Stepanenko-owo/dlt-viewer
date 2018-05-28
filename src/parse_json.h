@@ -36,6 +36,8 @@ private slots:
 
     void on_tbExpandAll_clicked();
 
+    void on_tbRegExp_clicked(bool checked);
+
 private:
     Ui::Parse_JSON *ui;
     std::unique_ptr<QJsonContainer> parseJson;

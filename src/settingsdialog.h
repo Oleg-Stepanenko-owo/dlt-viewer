@@ -22,6 +22,7 @@
 
 #include <QDialog>
 #include <QMainWindow>
+#include <set>
 #include "qdlt.h"
 
 #define DEFAULT_REFRESH_RATE 20
@@ -30,6 +31,9 @@
 namespace Ui {
     class SettingsDialog;
 }
+
+constexpr char SEARCH_STR[] = "search/str";
+constexpr char SEARCH_STR_COUNT[] = "search/strCount";
 
 class SettingsDialog : public QDialog {
     Q_OBJECT
@@ -116,13 +120,13 @@ public:
     QStringList getRecentFilters();
     QString getWorkingDirectory();
 
-    QString storedSearchStr;
+    std::set<QString> storedSearchStr;
 
     // this function checks if old cache files should be deleted
     // This function should be called during initialisation of dlt viewer
     void clearIndexCacheAfterDays();
 
-    void addSearchStr( const std::string& str );
+    bool addSearchStr( const QString& str );
 
 Q_SIGNALS:
     void FilterPathChanged();

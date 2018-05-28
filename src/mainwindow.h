@@ -408,6 +408,8 @@ public slots:
     void on_action_menuFile_Clear_triggered();
     void on_action_menuFile_Quit_triggered();
     void on_actionFindNext();
+    void list_context_menu(QPoint pos);
+
 private slots:
 
     // Search methods
@@ -528,6 +530,8 @@ private slots:
     void on_action_menuConfig_customCopy_to_clipboard_triggered();
 
     void on_actionaction_JSON_parse_triggered();
+
+    void on_action_removeStoredStr( );
 
 public slots:
 

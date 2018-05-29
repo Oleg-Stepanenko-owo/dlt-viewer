@@ -269,7 +269,7 @@ bool DltExporter::exportMsg(int num, QDltMsg &msg, QByteArray &buf)
             text += QString("%1").arg(from->getMsgFilterPos(selectedRows[num]));
         else
             return false;
-        text += msg.toStringHeader( m_settings );
+        text += m_settings ? toStringHeader( msg ) : msg.toStringHeader();
         text += " ";
         text += msg.toStringPayload().simplified();
         text += "\n";
@@ -409,4 +409,35 @@ void DltExporter::exportMessages(QDltFile *from, QFile *to, QDltPluginManager *p
        return;
     }
     qDebug() << "DLT export done for" << exportCounter << "messages with result" << startFinishError;
+}
+
+QString DltExporter::toStringHeader( const QDltMsg& msg ) const
+{
+    QString text;
+    text.reserve(1024);
+    text += '|';
+    if( m_settings->showTime)
+        text += QString("%1.%2|").arg(msg.getTimeString()).arg(msg.getMicroseconds(),6,10,QLatin1Char('0'));
+    if( m_settings->showTimestamp )
+        text += QString("%1.%2|").arg(msg.getTimestamp()/10000).arg(msg.getTimestamp()%10000,4,10,QLatin1Char('0'));
+    if( m_settings->showCount)
+        text += QString("%1|").arg(msg.getMessageCounter());
+    if( m_settings->showEcuId )
+        text += QString("%1|").arg(msg.getEcuid());
+    if( m_settings->showApId )
+        text += QString("%1|").arg(msg.getApid());
+    if( m_settings->showCtId )
+        text += QString("%1|").arg(msg.getCtid());
+    if( m_settings->showSessionId )
+        text += QString("%1|").arg(msg.getSessionid());
+    if( m_settings->showType )
+        text += QString("%2|").arg(msg.getTypeString());
+    if( m_settings->showSubtype )
+        text += QString("%2|").arg(msg.getSubtypeString());
+    if( m_settings->showMode )
+        text += QString("%2|").arg(msg.getModeString());
+    if( m_settings->showArguments )
+        text += QString("%1|").arg(msg.getNumberOfArguments());
+
+    return text;
 }

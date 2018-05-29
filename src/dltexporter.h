@@ -45,6 +45,7 @@ private:
     bool finish();
     bool getMsg(int num, QDltMsg &msg, QByteArray &buf);
     bool exportMsg(int num, QDltMsg &msg,QByteArray &buf);
+    QString toStringHeader( const QDltMsg& msg ) const;
 
 public:
 

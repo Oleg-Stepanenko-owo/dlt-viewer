@@ -57,6 +57,10 @@ add_executable (${TARGET_NAME}
     dltmsgqueue.cpp
     dltfileindexerthread.cpp
     dltfileindexerdefaultfilterthread.cpp
+    parse_json.cpp
+    qjsoncontainer.cpp
+    qjsonitem.cpp
+    qjsonmodel.cpp
     resource.qrc
     ${UI_HEADERS}
     ${UI_RESOURCES_RCC}

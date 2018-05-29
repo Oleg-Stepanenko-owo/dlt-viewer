@@ -23,7 +23,6 @@
 #include <iostream>
 
 #include "qdlt.h"
-#include "settingsdialog.h"
 
 extern "C"
 {
@@ -501,51 +500,22 @@ void QDltMsg::removeArgument(int index)
 }
 
 
-QString QDltMsg::toStringHeader( const SettingsDialog* settings ) const
+QString QDltMsg::toStringHeader() const
 {
     QString text;
     text.reserve(1024);
 
-    if( settings == NULL )
-    {
-        text += QString(" %1.%2").arg(getTimeString()).arg(getMicroseconds(),6,10,QLatin1Char('0'));
-        text += QString(" %1.%2").arg(getTimestamp()/10000).arg(getTimestamp()%10000,4,10,QLatin1Char('0'));
-        text += QString(" %1").arg(getMessageCounter());
-        text += QString(" %1").arg(getEcuid());
-        text += QString(" %1").arg(getApid());
-        text += QString(" %1").arg(getCtid());
-        text += QString(" %1").arg(getSessionid());
-        text += QString(" %2").arg(getTypeString());
-        text += QString(" %2").arg(getSubtypeString());
-        text += QString(" %2").arg(getModeString());
-        text += QString(" %1").arg(getNumberOfArguments());
-    }
-    else
-    {
-        text += '|';
-        if( settings->showTime)
-            text += QString("%1.%2|").arg(getTimeString()).arg(getMicroseconds(),6,10,QLatin1Char('0'));
-        if( settings->showTimestamp )
-            text += QString("%1.%2|").arg(getTimestamp()/10000).arg(getTimestamp()%10000,4,10,QLatin1Char('0'));
-        if( settings->showCount)
-            text += QString("%1|").arg(getMessageCounter());
-        if( settings->showEcuId )
-            text += QString("%1|").arg(getEcuid());
-        if( settings->showApId )
-            text += QString("%1|").arg(getApid());
-        if( settings->showCtId )
-            text += QString("%1|").arg(getCtid());
-        if( settings->showSessionId )
-            text += QString("%1|").arg(getSessionid());
-        if( settings->showType )
-            text += QString("%2|").arg(getTypeString());
-        if( settings->showSubtype )
-            text += QString("%2|").arg(getSubtypeString());
-        if( settings->showMode )
-            text += QString("%2|").arg(getModeString());
-        if( settings->showArguments )
-            text += QString("%1|").arg(getNumberOfArguments());
-    }
+    text += QString(" %1.%2").arg(getTimeString()).arg(getMicroseconds(),6,10,QLatin1Char('0'));
+    text += QString(" %1.%2").arg(getTimestamp()/10000).arg(getTimestamp()%10000,4,10,QLatin1Char('0'));
+    text += QString(" %1").arg(getMessageCounter());
+    text += QString(" %1").arg(getEcuid());
+    text += QString(" %1").arg(getApid());
+    text += QString(" %1").arg(getCtid());
+    text += QString(" %1").arg(getSessionid());
+    text += QString(" %2").arg(getTypeString());
+    text += QString(" %2").arg(getSubtypeString());
+    text += QString(" %2").arg(getModeString());
+    text += QString(" %1").arg(getNumberOfArguments());
 
     return text;
 }

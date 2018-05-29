@@ -23,6 +23,7 @@
 #include <QDialog>
 #include <QMainWindow>
 #include <set>
+
 #include "qdlt.h"
 
 #define DEFAULT_REFRESH_RATE 20

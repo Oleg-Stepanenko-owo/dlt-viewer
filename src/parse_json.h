@@ -22,6 +22,9 @@ public:
 
     void loadJson( const QString& val );
     void keyPressEvent(QKeyEvent *evt);
+    QVariant getValue( const QString& key ){
+        if( nullptr != parseJson ) return parseJson->getValue( key ); }
+
 private slots:
 
     void on_leSearch_textChanged(const QString &arg1);

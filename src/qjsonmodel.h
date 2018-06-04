@@ -27,9 +27,7 @@ public:
     int columnCount(const QModelIndex &parent = QModelIndex()) const;
     QJsonTreeItem* itemFromIndex(const QModelIndex &index) const;
     void setIcon(const QJsonValue::Type& type, const QIcon& icon);
-
-
-
+    QVariant getValue( const QString& key ) const;
 
 private:
     QJsonTreeItem * mRootItem;

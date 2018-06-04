@@ -82,7 +82,7 @@ bool QJsonModel::loadJson(const QByteArray &json)
                        "}").toUtf8()).object()));
         endResetModel();
         emit dataUpdated();
-        return true;
+        return false;
     }
     if(!mDocument.isNull())
     {

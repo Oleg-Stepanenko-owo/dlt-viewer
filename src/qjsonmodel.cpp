@@ -70,7 +70,7 @@ bool QJsonModel::load(QIODevice *device)
 bool QJsonModel::loadJson(const QByteArray &json)
 {
     QJsonParseError parseError;
-    QJsonDocument mDocument=QJsonDocument::fromJson(json,&parseError);
+    mDocument = QJsonDocument::fromJson(json,&parseError);
     if (parseError.error != QJsonParseError::NoError)
     {
         qDebug() << " QJsonParseError::NoError ";
@@ -82,7 +82,7 @@ bool QJsonModel::loadJson(const QByteArray &json)
                        "}").toUtf8()).object()));
         endResetModel();
         emit dataUpdated();
-        return true;
+        return false;
     }
     if(!mDocument.isNull())
     {
@@ -237,4 +237,13 @@ void QJsonModel::setIcon(const QJsonValue::Type &type, const QIcon &icon)
     mTypeIcons.insert(type,icon);
 }
 
+QVariant QJsonModel::getValue( const QString& key ) const
+{
+    if( !mDocument.isEmpty() )
+    {
+        QJsonObject json_obj = mDocument.object();
+        return json_obj.take(key);
+    }
+    return false;
+}
 

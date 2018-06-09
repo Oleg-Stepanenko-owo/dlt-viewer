@@ -20,9 +20,18 @@ void Parse_JSON::loadJson( const QString& val )
 {
     if( parseJson )
     {
-        parseJson->loadJson(val);
-        ui->plainTextEdit->setPlainText( (QJsonDocument::fromJson(parseJson.get()->
-                                                                  getJSONText().toUtf8())).toJson(QJsonDocument::Indented) );
+        if(parseJson->loadJson(val))
+        {
+            QVariant val = parseJson->getValue("function");
+            if( QVariant::Bool != val.type() && val.isValid() )
+                setWindowTitle( val.toJsonValue().toString().toUtf8() );
+            ui->plainTextEdit->setPlainText( (QJsonDocument::fromJson(parseJson.get()->
+                                                                      getJSONText().toUtf8())).toJson(QJsonDocument::Indented) );
+        }
+        else
+        {
+            ui->plainTextEdit->setPlainText( val );
+        }
     }
 }
 

@@ -243,10 +243,8 @@ const QString DltExporter::extract_payload( QDltFile *from, QModelIndexList *sel
     return_val.replace("\"{\"", "{\"");
     return_val.replace("}\" }", "} }");
 
-    QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText(return_val);
-
-
+//    QClipboard *clipboard = QApplication::clipboard();
+//    clipboard->setText(return_val);
     return return_val;
 }
 

@@ -113,18 +113,20 @@ void QJsonContainer::findTextJsonIndexHandler(bool direction)
     }
 }
 
-void QJsonContainer::loadJson(QJsonDocument data)
+bool QJsonContainer::loadJson(QJsonDocument data)
 {
     plainJSONText = data.toJson();
-    model->loadJson(plainJSONText.toUtf8());
+    bool retVal = model->loadJson(plainJSONText.toUtf8());
     expandAll();
+    return retVal;
 }
 
-void QJsonContainer::loadJson(QString data)
+bool QJsonContainer::loadJson(QString data)
 {
     plainJSONText = data;
-    model->loadJson(data.toUtf8());
+    bool retVal = model->loadJson(data.toUtf8());
     expandAll();
+    return retVal;
 }
 
 void QJsonContainer::expandAll( )

@@ -18,14 +18,15 @@ public:
 
     QStringList extractStringsFromModel(QJsonModel *model, const QModelIndex &parent);
 
-    void loadJson(QJsonDocument data);
-    void loadJson(QString data);
+    bool loadJson(QJsonDocument data);
+    bool loadJson(QString data);
     QString getJSONText() { return plainJSONText; }
     void search( const QString& text, bool caseSensitivity = false, bool direction = true );
     void resetCurrentFind();
     void expandAll( );
     void setExpandAll( bool val ){ if( isExpandAll != val ){ isExpandAll=val; expandAll(); } }
     void setRegExp( bool val ){ isRegExp = val; }
+    QVariant getValue( const QString& key ) { return model->getValue( key ); }
 
 private:
     bool isCaseSensitivity{false};

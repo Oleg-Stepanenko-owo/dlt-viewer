@@ -6779,21 +6779,16 @@ void MainWindow::on_actionStoreRegExp_triggered()
 void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
 {
     QJsonDocument doc = QJsonDocument::fromJson( index.data().toString().toUtf8() );
-    QString clip_str;
 
-    if( !doc.isEmpty() )
+    if( !doc.isNull() && !doc.isEmpty() )
     {
-        QJsonObject json_obj = doc.object();
-        QJsonValue val = json_obj.take("function");
-        clip_str = val.toString();
+        on_actionaction_JSON_parse_triggered();
     }
     else
     {
-        clip_str = index.data().toString();
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText( index.data().toString() );
     }
-
-    QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText( clip_str );
 }
 
 void MainWindow::on_action_menuConfig_customCopy_to_clipboard_triggered()
@@ -6817,9 +6812,13 @@ void MainWindow::list_context_menu(QPoint pos)
     if (!index.isValid()) { return; }
     QMenu menu;
     QAction* action = new QAction(QString("Remove: %1").arg(searchTextbox->text()), this );
-    connect(action, SIGNAL(triggered()), SLOT(on_action_removeStoredStr( )));
-
+    connect(action, SIGNAL(triggered()), SLOT(on_action_removeStoredStr( ))); 
     menu.addAction(action);
+
+    action = new QAction(QString("Clear search history"), this );
+    connect(action, SIGNAL(triggered()), SLOT(on_action_cleanSearchHistory( )));
+    menu.addAction(action);
+
     menu.exec(view->mapToGlobal(pos));
 }
 
@@ -6842,6 +6841,11 @@ void MainWindow::on_action_removeStoredStr(  )
     }
     settingsFile->setValue( SEARCH_STR_COUNT, static_cast<int>(settings->storedSearchStr.size()) );
 
+    on_action_cleanSearchHistory();
+}
+
+void MainWindow::on_action_cleanSearchHistory(  )
+{
     searchComboBox->clear();
     for( const auto& val: settings->storedSearchStr )
         searchComboBox->addItem( val );

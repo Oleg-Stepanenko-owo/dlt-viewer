@@ -6817,9 +6817,13 @@ void MainWindow::list_context_menu(QPoint pos)
     if (!index.isValid()) { return; }
     QMenu menu;
     QAction* action = new QAction(QString("Remove: %1").arg(searchTextbox->text()), this );
-    connect(action, SIGNAL(triggered()), SLOT(on_action_removeStoredStr( )));
-
+    connect(action, SIGNAL(triggered()), SLOT(on_action_removeStoredStr( ))); 
     menu.addAction(action);
+
+    action = new QAction(QString("Clear search history"), this );
+    connect(action, SIGNAL(triggered()), SLOT(on_action_cleanSearchHistory( )));
+    menu.addAction(action);
+
     menu.exec(view->mapToGlobal(pos));
 }
 
@@ -6842,6 +6846,11 @@ void MainWindow::on_action_removeStoredStr(  )
     }
     settingsFile->setValue( SEARCH_STR_COUNT, static_cast<int>(settings->storedSearchStr.size()) );
 
+    on_action_cleanSearchHistory();
+}
+
+void MainWindow::on_action_cleanSearchHistory(  )
+{
     searchComboBox->clear();
     for( const auto& val: settings->storedSearchStr )
         searchComboBox->addItem( val );

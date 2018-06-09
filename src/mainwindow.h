@@ -533,6 +533,8 @@ private slots:
 
     void on_action_removeStoredStr( );
 
+    void on_action_cleanSearchHistory();
+
 public slots:
 
     void sendInjection(int index,QString applicationId,QString contextId,int serviceId,QByteArray data);

@@ -6779,21 +6779,16 @@ void MainWindow::on_actionStoreRegExp_triggered()
 void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
 {
     QJsonDocument doc = QJsonDocument::fromJson( index.data().toString().toUtf8() );
-    QString clip_str;
 
-    if( !doc.isEmpty() )
+    if( !doc.isNull() && !doc.isEmpty() )
     {
-        QJsonObject json_obj = doc.object();
-        QJsonValue val = json_obj.take("function");
-        clip_str = val.toString();
+        on_actionaction_JSON_parse_triggered();
     }
     else
     {
-        clip_str = index.data().toString();
+        QClipboard *clipboard = QApplication::clipboard();
+        clipboard->setText( index.data().toString() );
     }
-
-    QClipboard *clipboard = QApplication::clipboard();
-    clipboard->setText( clip_str );
 }
 
 void MainWindow::on_action_menuConfig_customCopy_to_clipboard_triggered()

@@ -51,6 +51,7 @@ public:
     int get_SearchResultListSize() const;
     bool get_SearchResultEntry(int position, unsigned long &entry);
 
+    const QList <unsigned long>* getList(){ return &m_searchResultList; } const
 
     /* pointer to the current loaded file */
     QDltFile *qfile;

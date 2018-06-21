@@ -59,6 +59,7 @@ void getmessage( int indexrow, long int filterposindex, unsigned int* decodeflag
 
 TableModel::TableModel(const QString & /*data*/, QObject *parent)
      : QAbstractTableModel(parent)
+     , m_searchResultList(nullptr)
  {
      qfile = NULL;
      project = NULL;
@@ -308,6 +309,9 @@ TableModel::TableModel(const QString & /*data*/, QObject *parent)
      if ( role == Qt::BackgroundRole )
      {
          getmessage( index.row(), filterposindex, &decodeflag, &msg, &lastmsg, qfile, &success); // version2
+
+         if( m_searchResultList && m_searchResultList->contains( index.row() ) )
+             return QVariant(QBrush(QColor(222,255,192)));
 
          if((DltSettingsManager::getInstance()->value("startup/pluginsEnabled", true).toBool()))
          {

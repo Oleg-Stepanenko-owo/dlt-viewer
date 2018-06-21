@@ -6564,6 +6564,7 @@ void MainWindow::searchTableRenewed()
         QString hits = QString("Search Results: %L1").arg(m_searchtableModel->get_SearchResultListSize());
         ui->dockWidgetSearchIndex->show();
         ui->dockWidgetSearchIndex->setWindowTitle(hits);
+        tableModel->setSearchResultList( m_searchtableModel->getList() );
     }
     m_searchtableModel->modelChanged();
 }

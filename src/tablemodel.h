@@ -60,10 +60,13 @@ public:
     void setLoggingOnlyMode(bool loggingOnlyMode) { this->loggingOnlyMode = loggingOnlyMode; }
 
     void setLastSearchIndex(int idx) {this->lastSearchIndex = idx;}
+    void setSearchResultList( const QList<unsigned long>* list ){ m_searchResultList = list; }
+
 private:
     int lastSearchIndex;
     bool emptyForceFlag;
     bool loggingOnlyMode;
+    const QList <unsigned long>* m_searchResultList;
 
     QColor searchBackgroundColor() const;
 };

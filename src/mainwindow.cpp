@@ -6777,19 +6777,18 @@ void MainWindow::on_actionStoreRegExp_triggered()
     }
 }
 
-void MainWindow::on_tableView_doubleClicked(const QModelIndex &index)
+void MainWindow::on_tableView_doubleClicked(const QModelIndex &/*index*/)
 {
-    QJsonDocument doc = QJsonDocument::fromJson( index.data().toString().toUtf8() );
-
-    if( !doc.isNull() && !doc.isEmpty() )
-    {
+//    QJsonDocument doc = QJsonDocument::fromJson( index.data().toString().toUtf8() );
+//    if( !doc.isNull() && !doc.isEmpty() )
+//    {
         on_actionaction_JSON_parse_triggered();
-    }
-    else
-    {
-        QClipboard *clipboard = QApplication::clipboard();
-        clipboard->setText( index.data().toString() );
-    }
+//    }
+//    else
+//    {
+//        QClipboard *clipboard = QApplication::clipboard();
+//        clipboard->setText( index.data().toString() );
+//    }
 }
 
 void MainWindow::on_action_menuConfig_customCopy_to_clipboard_triggered()
